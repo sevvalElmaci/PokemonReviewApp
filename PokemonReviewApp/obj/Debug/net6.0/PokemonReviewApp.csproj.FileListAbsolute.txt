@@ -6,3 +6,4 @@ C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\obj\Debug\net6.0
 C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\obj\Debug\net6.0\PokemonReviewApp.csproj.CoreCompileInputs.cache
 C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\obj\Debug\net6.0\PokemonReviewApp.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\obj\Debug\net6.0\PokemonReviewApp.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\obj\Debug\net6.0\PokemonReviewApp.sourcelink.json
