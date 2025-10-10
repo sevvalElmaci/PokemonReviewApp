@@ -30,9 +30,10 @@ namespace PokemonReviewApp.Repository
             if (review.Count() <= 0 )
             {
                 return 0;
-                return ((decimal)review.Sum(r=>r.Rating) / review.Count());
 
             }
+            return ((decimal)review.Sum(r => r.Rating) / review.Count());
+
         }
 
         public ICollection<Pokemon> GetPokemons()
@@ -42,7 +43,7 @@ namespace PokemonReviewApp.Repository
 
         public bool PokemonExists(int pokeId)
         {
-            throw new NotImplementedException();
+            return _context.Pokemon.Any(p => p.Id == pokeId);
         }
     }
 }
