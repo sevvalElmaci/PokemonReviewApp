@@ -11,7 +11,6 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace PokemonReviewApp.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class PokemonController : Controller

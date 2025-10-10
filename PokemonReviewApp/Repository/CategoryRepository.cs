@@ -2,7 +2,8 @@
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 using System.Xml.Linq;
-    namespace PokemonReviewApp.Repository
+
+namespace PokemonReviewApp.Repository
 {
     public class CategoryRepository : ICategoryRepository
     {
@@ -10,29 +11,25 @@ using System.Xml.Linq;
         public CategoryRepository(DataContext context)
         {
             _context = context;
-
-            
         }
-
-
         public bool CategoryExist(int id)
         {
-            throw new NotImplementedException();
+            return _context.Categories.Any(c => c.Id == id);
         }
 
         public ICollection<Category> GetCategories()
         {
-            throw new NotImplementedException();
+            return _context.Categories.ToList();
         }
-
         public Category GetCategory(int id)
         {
-            throw new NotImplementedException();
+            return _context.Categories.Where(e => e.Id == id).FirstOrDefault();
         }
 
         public ICollection<Pokemon> GetPokemonByCategory(int categoryId)
         {
-            throw new NotImplementedException();
+            return _context.PokemonCategories.Where(e => e.CategoryId == categoryId).Select(c => c.Pokemon).ToList();
+
         }
     }
 }
