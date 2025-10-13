@@ -19,16 +19,21 @@ namespace PokemonReviewApp.Repository
 
         public ICollection<Category> GetCategories()
         {
-            return _context.Categories.ToList();
+            return _context.Categories
+                .ToList();
         }
         public Category GetCategory(int id)
         {
-            return _context.Categories.Where(e => e.Id == id).FirstOrDefault();
+            return _context.Categories
+                .Where(e => e.Id == id)
+                .FirstOrDefault();
         }
 
         public ICollection<Pokemon> GetPokemonByCategory(int categoryId)
         {
-            return _context.PokemonCategories.Where(e => e.CategoryId == categoryId).Select(c => c.Pokemon).ToList();
+            return _context.PokemonCategories
+                .Where(e => e.CategoryId == categoryId)
+                .Select(c => c.Pokemon).ToList();
 
         }
     }

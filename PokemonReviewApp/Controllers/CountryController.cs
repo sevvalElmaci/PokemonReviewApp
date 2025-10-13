@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
-using PokemonReviewApp.Data;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using PokemonReviewApp.Repository;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace PokemonReviewApp.Controllers
@@ -24,7 +19,6 @@ namespace PokemonReviewApp.Controllers
         {
             _countryRepository = _countryRepository;
             _mapper = mapper;
-
         }
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Country>))]

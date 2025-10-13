@@ -12,21 +12,23 @@ namespace PokemonReviewApp.Repository
         {
             _context = context;
         }
-
         public Pokemon GetPokemon(int id)
         {
-            return _context.Pokemon.Where(p => p.Id == id).FirstOrDefault();
+            return _context.Pokemon
+                .Where(p => p.Id == id)
+                .FirstOrDefault();
         }
 
         public Pokemon GetPokemon(string name)
         {
-            return _context.Pokemon.Where(p => p.Name == name).FirstOrDefault();
-
+            return _context.Pokemon
+                .Where(p => p.Name == name)
+                .FirstOrDefault();
         }
-
         public decimal GetPokemonRating(int pokeId)
         {
-            var review = _context.Reviews.Where(p => p.Pokemon.Id == pokeId);
+            var review = _context.Reviews
+                .Where(p => p.Pokemon.Id == pokeId);
             if (review.Count() <= 0 )
             {
                 return 0;
@@ -38,12 +40,15 @@ namespace PokemonReviewApp.Repository
 
         public ICollection<Pokemon> GetPokemons()
         {
-            return _context.Pokemon.OrderBy(p => p.Id).ToList();
+            return _context.Pokemon
+                .OrderBy(p => p.Id)
+                .ToList();
         }
 
         public bool PokemonExists(int pokeId)
         {
-            return _context.Pokemon.Any(p => p.Id == pokeId);
+            return _context.Pokemon
+                .Any(p => p.Id == pokeId);
         }
     }
 }
