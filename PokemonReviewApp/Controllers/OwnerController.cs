@@ -13,14 +13,14 @@ namespace PokemonReviewApp.Controllers
     public class OwnerController : Controller
     {
         private readonly IOwnerRepository _ownerRepository;
-        private readonly IPokemonRepository _pokemonRepository;
+        private readonly ICountryRepository _countryRepository;
         private readonly IMapper _mapper;
 
-        public OwnerController(IOwnerRepository ownerRepository, IMapper mapper, IPokemonRepository pokemonRepository)
+        public OwnerController(IOwnerRepository ownerRepository, IMapper mapper, ICountryRepository countryRepository)
         {
             _ownerRepository = ownerRepository;
             _mapper = mapper;
-            _pokemonRepository = pokemonRepository;
+            _countryRepository = countryRepository;
         }
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Owner>))]
@@ -60,7 +60,7 @@ namespace PokemonReviewApp.Controllers
                 return NotFound();
             }
 
-            var owner = _mapper.Map<List<OwnerDto>>(
+            var owner = _mapper.Map<List<PokemonDto>>(
                 _ownerRepository.GetPokemonByOwner(ownerId));
 
             if (!ModelState.IsValid)
@@ -69,28 +69,41 @@ namespace PokemonReviewApp.Controllers
             return Ok(owner);
         }
 
-        //HERE I COME!! 
-        [HttpGet("{pokeId}/owner")]
-        [ProducesResponseType(200, Type = typeof(Pokemon))]
+        [HttpPost]
+        [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult GetOwnerOfAPokemon(int pokeId)
+
+        public IActionResult CreateOwner([FromQuery] int countryId, [FromBody] OwnerDto ownerCreate)
         {
-            if (!_pokemonRepository.PokemonExists(pokeId))
+
+            if (ownerCreate == null)
+                return BadRequest(ModelState);
+            var owners = _ownerRepository.GetOwners()
+            .Where(c => c.LastName.Trim().ToUpper() == ownerCreate.LastName.TrimEnd().ToUpper())
+            .FirstOrDefault();
+
+            if (owners != null)
             {
-                return NotFound();
+                ModelState.AddModelError("", "Owner already exists");
+                return StatusCode(422, ModelState);
             }
-
-            var pokemon = _mapper.Map<List<OwnerDto>>(
-                _ownerRepository.GetOwnerOfAPokemon(pokeId));
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(pokemon);
+            var ownerMap = _mapper.Map<Owner>(ownerCreate);
+
+            ownerMap.Country = _countryRepository.GetCountry(countryId);
+
+            if (!_ownerRepository.CreateOwner(ownerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
         }
 
 
+
     }
-
-
 }

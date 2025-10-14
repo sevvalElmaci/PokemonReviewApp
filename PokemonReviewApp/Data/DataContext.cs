@@ -9,8 +9,8 @@ namespace PokemonReviewApp.Data
 
     public class DataContext : DbContext //inherit from Dbcontext
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options) 
-        { 
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Country> Countries { get; set; }
@@ -22,7 +22,7 @@ namespace PokemonReviewApp.Data
         public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-            //let me tell you a story about RELATIONSHIPSS of ENTITY
+        //let me tell you a story about RELATIONSHIPSS of ENTITY
         // OnModelCreating : special code of DBCONTEXT. it says that, when we create database we define some rules manually.
         //relationship exist with this part. it explains relationships to ENTITY FRAMEWORK
         {
@@ -34,28 +34,22 @@ namespace PokemonReviewApp.Data
                 .WithMany(pc => pc.PokemonCategories)
                 .HasForeignKey(p => p.PokemonId);
             modelBuilder.Entity<PokemonCategory>()
-              .HasOne(p => p.Category)  
+              .HasOne(p => p.Category)
               .WithMany(pc => pc.PokemonCategories)
               .HasForeignKey(c => c.CategoryId);
-
-            modelBuilder.Entity<PokemonOwner>() 
+            modelBuilder.Entity<PokemonOwner>()
                .HasKey(po => new { po.PokemonId, po.OwnerId });
             modelBuilder.Entity<PokemonOwner>()
-                .HasOne(p => p.Pokemon) 
+                .HasOne(p => p.Pokemon)
                 .WithMany(pc => pc.PokemonOwners)
                 .HasForeignKey(p => p.PokemonId);
             modelBuilder.Entity<PokemonOwner>()
               .HasOne(p => p.Owner)
               .WithMany(pc => pc.PokemonOwners)
-              .HasForeignKey(c => c.PokemonId);
+              .HasForeignKey(c => c.OwnerId);
 
-
+            //HasOne kullanırken aslında diyorum ki,
+            //p için spesifik bir pokemon olsun bu pokemonun özellikleri şöyledir: withmany.. hasforeignkey...
         }
-
-
-
-
-
     }
-
 }

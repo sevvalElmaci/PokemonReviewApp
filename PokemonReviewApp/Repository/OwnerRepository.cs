@@ -28,7 +28,7 @@ namespace PokemonReviewApp.Repository
         public ICollection<Pokemon> GetPokemonByOwner(int ownerId)
         {
             return _context.PokemonOwners
-                .Where(p => p.Owner.Id == ownerId)
+                .Where(p => p.OwnerId == ownerId)
                 .Select(p => p.Pokemon)
                 .ToList();
         }
@@ -43,6 +43,18 @@ namespace PokemonReviewApp.Repository
         {
             return _context.Owners
                 .Any(o => o.Id == ownerId);
+        }
+
+        public bool CreateOwner(Owner owner)
+        {
+            _context.Add(owner);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
     }
 }

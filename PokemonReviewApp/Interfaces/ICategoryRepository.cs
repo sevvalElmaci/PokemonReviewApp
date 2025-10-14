@@ -11,7 +11,9 @@ namespace PokemonReviewApp.Interfaces
         //FIRE, fire, Fire
         ICollection<Pokemon> GetPokemonByCategory(int categoryId);
         bool CategoryExist(int id); 
-    
+        bool CreateCategory(Category category); 
+        bool Save();    
+
     }
 
 }
