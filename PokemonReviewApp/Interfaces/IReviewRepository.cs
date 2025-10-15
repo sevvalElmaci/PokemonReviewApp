@@ -13,6 +13,10 @@ namespace PokemonReviewApp.Interfaces
         //bir reviewer'dan gelen bütün review'ları incelemek için method yok.
         //ICollection<Reviewer> GetReviewsFromAReviewer(int reviewerId);
 
+        bool CreateReview(Review review);
+        bool UpdateReview(Review review);
+        bool Save();
+
 
 
 

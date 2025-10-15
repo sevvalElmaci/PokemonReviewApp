@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
@@ -17,7 +18,7 @@ namespace PokemonReviewApp.Controllers
         public ReviewerController(IReviewerRepository reviewerRepository, IMapper mapper)
         {
             _reviewerRepository = reviewerRepository;
-            _mapper = mapper;            
+            _mapper = mapper;
         }
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Reviewer>))]
@@ -66,9 +67,45 @@ namespace PokemonReviewApp.Controllers
             return Ok(reviews);
 
         }
-    } 
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+
+        public IActionResult CreateReviewer([FromBody] ReviewerDto reviewerCreate)
+        {
+            if (reviewerCreate == null)
+                return BadRequest(ModelState);
+
+            var reviewers = _reviewerRepository.GetReviewers()
+                .Where(c => c.LastName.Trim().ToUpper() == reviewerCreate.LastName.TrimEnd().ToUpper())
+                .FirstOrDefault();
+
+            if (reviewers != null)
+            {
+                ModelState.AddModelError("", "Reviewer alreadry exists");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewerMap = _mapper.Map<Reviewer>(reviewerCreate);
+
+
+            if (!_reviewerRepository.CreateReviewer(reviewerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+
+            }
+            return Ok("Successfully created");
+
+
+        }
 
 
 
     }
+}
 

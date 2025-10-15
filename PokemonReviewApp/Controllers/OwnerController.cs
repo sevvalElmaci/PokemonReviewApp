@@ -78,6 +78,8 @@ namespace PokemonReviewApp.Controllers
 
             if (ownerCreate == null)
                 return BadRequest(ModelState);
+
+
             var owners = _ownerRepository.GetOwners()
             .Where(c => c.LastName.Trim().ToUpper() == ownerCreate.LastName.TrimEnd().ToUpper())
             .FirstOrDefault();

@@ -13,6 +13,7 @@ namespace PokemonReviewApp
         public void SeedDataContext()
         {
             if (!dataContext.PokemonOwners.Any())
+                //veritabanında hiç pokemonowner yoksa
             {
                 var pokemonOwners = new List<PokemonOwner>()
                 {
