@@ -77,3 +77,4 @@ C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\obj\Debug\net6.0
 C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\obj\Debug\net6.0\ref\PokemonReviewApp.dll
 C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\bin\Debug\net6.0\AutoMapper.dll
 C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\yazilim\source\repos\PokemonReviewApp\PokemonReviewApp\obj\Debug\net6.0\staticwebassets.upToDateCheck.txt

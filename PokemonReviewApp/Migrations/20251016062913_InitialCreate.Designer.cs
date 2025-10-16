@@ -12,7 +12,7 @@ using PokemonReviewApp.Data;
 namespace PokemonReviewApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251007114829_InitialCreate")]
+    [Migration("20251016062913_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -133,6 +133,8 @@ namespace PokemonReviewApp.Migrations
 
                     b.HasKey("PokemonId", "OwnerId");
 
+                    b.HasIndex("OwnerId");
+
                     b.ToTable("PokemonOwners");
                 });
 
@@ -225,7 +227,7 @@ namespace PokemonReviewApp.Migrations
                 {
                     b.HasOne("PokemonReviewApp.Models.Owner", "Owner")
                         .WithMany("PokemonOwners")
-                        .HasForeignKey("PokemonId")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

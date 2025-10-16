@@ -18,7 +18,7 @@ namespace PokemonReviewApp.Controllers
 
         public CountryController(ICountryRepository countryRepository, IMapper mapper)
         {
-            _countryRepository = _countryRepository;
+            _countryRepository = countryRepository;
             _mapper = mapper;
         }
         [HttpGet]
@@ -94,6 +94,43 @@ namespace PokemonReviewApp.Controllers
             }
 
             return Ok("Successfully created");
+        }
+
+        [HttpPut("{countryId}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+
+        public IActionResult UpdateCountry(int countryId, [FromBody] CountryDto updatedCountry)
+
+        {
+            if (updatedCountry == null)
+                return BadRequest(ModelState);
+
+            if (countryId != updatedCountry.Id)
+                return BadRequest(ModelState);
+
+            if (!_countryRepository.CountryExists(countryId))
+                return NotFound();
+            //if country exist you can do update operation
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+            // are data correct or not based on model state rules and protocols
+            //control line yaniii
+
+            var countryMap = _mapper.Map<Country>(updatedCountry);
+
+            if (!_countryRepository.UpdateCountry(countryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while updating");
+                    return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
+            //Put method does not return any content after updating 
+            //cause you didnt create anything new
+            // you just updated existing one
         }
 
     }
