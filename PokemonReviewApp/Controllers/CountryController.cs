@@ -48,7 +48,7 @@ namespace PokemonReviewApp.Controllers
             return Ok(country);
 
         }
-        [HttpGet("{owners}/ownerId")]
+        [HttpGet("owner/{ownerId}")]
         [ProducesResponseType(200, Type = typeof(Country))]
         [ProducesResponseType(400)]
         public IActionResult GetCountryOfAnOwner(int ownerId)
@@ -66,7 +66,7 @@ namespace PokemonReviewApp.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateCountry([FromBody] CountryDto countryCreate) 
+        public IActionResult CreateCountry([FromBody] CountryDtoCreate countryCreate) 
         { 
             if(countryCreate == null)
             return BadRequest(ModelState);

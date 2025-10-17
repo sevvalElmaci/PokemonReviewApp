@@ -14,11 +14,19 @@ namespace PokemonReviewApp.Controllers
     {
         private readonly IPokemonRepository _pokemonRepository;
         private readonly IMapper _mapper;
+        private readonly IOwnerRepository _ownerRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IReviewRepository _reviewRepository;
 
-        public PokemonController(IPokemonRepository pokemonRepository, IMapper mapper)
+        public PokemonController(IPokemonRepository pokemonRepository,
+            IMapper mapper, IOwnerRepository ownerRepository, ICategoryRepository categoryRepository, IReviewRepository reviewRepository)
+
         {
             _pokemonRepository = pokemonRepository;
             _mapper = mapper;
+            _ownerRepository = ownerRepository;
+            _categoryRepository = categoryRepository;
+            _reviewRepository = reviewRepository;
         }
 
         [HttpGet]
@@ -59,11 +67,17 @@ namespace PokemonReviewApp.Controllers
             if (!_pokemonRepository.PokemonExists(pokeId))
                 return NotFound();
 
-            var rating = _pokemonRepository.GetPokemonRating(pokeId);
+
+            if (!_reviewRepository.GetReviewsForAPokemon(pokeId).Any())
+                return NotFound();
 
             if (!ModelState.IsValid)
                 return BadRequest();
+            //gelen input modelle uyumlu mu?
+            //[required] bir bölüm açtın ve orası boş kaldı model state error verir
+            //[emailAddress] için bir bölüm açtın ve oraya mail formatı girilmedi  model error verir
 
+            var rating = _pokemonRepository.GetPokemonRating(pokeId);
             return Ok(rating);
 
         }
@@ -72,20 +86,31 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public IActionResult CreatePokemon([FromQuery] int ownerId, [FromQuery] int catId, [FromBody] PokemonDto pokemonCreate)
+        public IActionResult CreatePokemon([FromQuery] int ownerId, [FromQuery] int catId, [FromBody] PokemonDtoCreate pokemonCreate)
         {
 
             if (pokemonCreate == null)
                 return BadRequest(ModelState);
-            var pokemons = _pokemonRepository.GetPokemons()
-            .Where(c => c.Name.Trim().ToUpper() == pokemonCreate.Name.TrimEnd().ToUpper())
-            .FirstOrDefault();
+            //var pokemons = _pokemonRepository.GetPokemons()
+            //.Where(c => c.Name.Trim().ToUpper() == pokemonCreate.Name.TrimEnd().ToUpper())
+            //.FirstOrDefault();
 
-            if (pokemons != null)
-            {
-                ModelState.AddModelError("", "Pokemon already exists");
-                return StatusCode(422, ModelState);
-            }
+            //if (pokemons != null)
+            //{
+            //    ModelState.AddModelError("", "Pokemon already exists");
+            //    return StatusCode(422, ModelState);
+            //}
+
+            var owner = _ownerRepository.GetOwner(ownerId);
+            if (owner == null)
+                return NotFound("Owner with that id not found");
+
+            var category = _categoryRepository.GetCategory(catId);
+            if (category == null)
+                return NotFound("Category with that id not found");
+
+
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -102,23 +127,23 @@ namespace PokemonReviewApp.Controllers
             return Ok("Successfully created");
         }
 
-        [HttpPut("{pokemonId}")]
+        [HttpPut("{pokeId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePokemoon(int pokeId, [FromBody] PokemonDto updatedPokemon)
+        public IActionResult UpdatePokemon(int pokeId, [FromBody] PokemonDto updatedPokemon)
         {
             if (updatedPokemon == null)
                 return BadRequest(ModelState);
 
             if (pokeId != updatedPokemon.Id)
-                return BadRequest(ModelState);
+                return BadRequest("Error: Those id duo are not matching");
 
             if (!_pokemonRepository.PokemonExists(pokeId))
                 return NotFound();
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(ModelState);
 
             var pokemonMap = _mapper.Map<Pokemon>(updatedPokemon);
 

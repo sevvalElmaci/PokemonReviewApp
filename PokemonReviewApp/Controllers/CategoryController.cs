@@ -30,7 +30,7 @@ namespace PokemonReviewApp.Controllers
             return Ok(categories);
 
         }
-        [HttpGet("{CategoryId}")]
+        [HttpGet("{categoryId}")]
         [ProducesResponseType(200, Type = typeof(Category))]
         [ProducesResponseType(400)]
 
@@ -62,9 +62,9 @@ namespace PokemonReviewApp.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public IActionResult CreateCategory([FromBody] CategoryDto categoryCreate)
+        public IActionResult CreateCategory([FromBody] CategoryDtoCreate categoryCreate)
         {
             if (categoryCreate == null)
                 return BadRequest(ModelState);
@@ -72,9 +72,10 @@ namespace PokemonReviewApp.Controllers
             var category = _categoryRepository.GetCategories()
                 .Where(c => c.Name.Trim().ToUpper() == categoryCreate.Name.TrimEnd().ToUpper())
                 .FirstOrDefault();
+
             if (category != null) {
                 ModelState.AddModelError("", "Category already exists");
-                return StatusCode(422, ModelState);
+                return StatusCode(400, ModelState);
             }
 
             if (!ModelState.IsValid)
@@ -82,13 +83,14 @@ namespace PokemonReviewApp.Controllers
 
             var categoryMap = _mapper.Map<Category>(categoryCreate);
 
-            if ((!_categoryRepository.CreateCategory(categoryMap)))
+            if (!_categoryRepository.CreateCategory(categoryMap))
             {
                 ModelState.AddModelError("", "Something went wrong while savin");
                 return StatusCode(500, ModelState);
             }
 
-            return Ok("Successfully created");
+
+            return CreatedAtAction(nameof(GetCategory), new { categoryId = categoryMap.Id }, categoryMap);
         }
 
         [HttpPut("{categoryId}")]

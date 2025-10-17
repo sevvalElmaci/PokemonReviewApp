@@ -70,25 +70,32 @@ namespace PokemonReviewApp.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(204)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
 
-        public IActionResult CreateOwner([FromQuery] int countryId, [FromBody] OwnerDto ownerCreate)
+        public IActionResult CreateOwner([FromQuery] int countryId, [FromBody] OwnerDtoCreate ownerCreate)
         {
 
             if (ownerCreate == null)
                 return BadRequest(ModelState);
 
-
-            var owners = _ownerRepository.GetOwners()
-            .Where(c => c.LastName.Trim().ToUpper() == ownerCreate.LastName.TrimEnd().ToUpper())
-            .FirstOrDefault();
-
-            if (owners != null)
+            var country = _countryRepository.GetCountry(countryId);
+            if(country ==null)
             {
-                ModelState.AddModelError("", "Owner already exists");
-                return StatusCode(422, ModelState);
+                ModelState.AddModelError("", "No country found with that Id");
+                return BadRequest(ModelState);
             }
+
+            //var owners = _ownerRepository.GetOwners()
+            //.Where(c => c.LastName.Trim().ToUpper() == ownerCreate.LastName.TrimEnd().ToUpper())
+            //.FirstOrDefault();
+            /////burayı güncelleyelim, lastname mi kalsın ne kalsın yani
+
+            //if (owners != null)
+            //{
+            //    ModelState.AddModelError("", "Owner already exists");
+            //    return StatusCode(422, ModelState);
+            //}
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 

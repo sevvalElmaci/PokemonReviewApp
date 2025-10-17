@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-
+using PokemonReviewApp.Repository;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace PokemonReviewApp.Controllers
 {
@@ -78,19 +77,30 @@ namespace PokemonReviewApp.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateReview([FromQuery] int reviewerId, [FromQuery] int pokeId, [FromBody] ReviewDto reviewCreate)
+        public IActionResult CreateReview([FromQuery] int reviewerId, [FromQuery] int pokeId, [FromBody] ReviewDtoCreate reviewCreate)
         {
             if (reviewCreate == null)
                 return BadRequest(ModelState);
+            //    .Where(c => c.Title.Trim().ToUpper() == reviewCreate.Title.TrimEnd().ToUpper())
+            //    .FirstOrDefault();
+            //if (reviews != null)
+            //{
+            //    ModelState.AddModelError("", "Review already exists");
+            //    return StatusCode(422, ModelState);
+            //}
 
-            var reviews = _reviewRepository.GetReviews ()
-                .Where(c => c.Title.Trim().ToUpper() == reviewCreate.Title.TrimEnd().ToUpper())
-                .FirstOrDefault();
-            if (reviews != null)
-            {
-                ModelState.AddModelError("", "Review already exists");
-                return StatusCode(422, ModelState);
-            }
+            var reviewer = _reviewerRepository.GetReviewer(reviewerId);
+            if (reviewer == null)
+                return NotFound("Reviewer with that id not found");
+
+            var review = _reviewRepository.GetReviews();
+            if (review == null)
+                return NotFound("Review with that id not found");
+
+            var pokemon = _pokemonRepository.GetPokemon(pokeId);
+            if (pokemon == null)
+                return NotFound("Pokemon with that id not found");
+
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -118,7 +128,10 @@ namespace PokemonReviewApp.Controllers
                 return BadRequest(ModelState);
 
             if (reviewId != updatedReview.Id)
-                return BadRequest(ModelState);
+                return BadRequest("That ID duo are not matching");
+
+            if (!_reviewRepository.ReviewExists(reviewId))
+                return NotFound("Review with that id not found");
 
             if (!_reviewRepository.ReviewExists(reviewId))
                 return NotFound();

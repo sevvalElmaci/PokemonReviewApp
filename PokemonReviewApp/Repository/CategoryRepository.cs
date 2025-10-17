@@ -23,7 +23,7 @@ namespace PokemonReviewApp.Repository
             //Connected or Disconnected
             //EntityState.Added = disconnected state
             _context.Add(category);
-            _context.SaveChanges();
+           
             return Save();
         }
 

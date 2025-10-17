@@ -29,7 +29,7 @@
     "Parameters": [
       {
         "Name": "categoryCreate",
-        "Type": "PokemonReviewApp.Dto.CategoryDto",
+        "Type": "PokemonReviewApp.Dto.CategoryDtoCreate",
         "IsRequired": true
       }
     ],
@@ -37,7 +37,42 @@
       {
         "Type": "System.Void",
         "MediaTypes": [],
-        "StatusCode": 204
+        "StatusCode": 201
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ]
+  },
+  {
+    "ContainingType": "PokemonReviewApp.Controllers.CategoryController",
+    "Method": "GetCategory",
+    "RelativePath": "api/Category/{categoryId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "categoryId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "PokemonReviewApp.Models.Category",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -137,41 +172,6 @@
   },
   {
     "ContainingType": "PokemonReviewApp.Controllers.CategoryController",
-    "Method": "GetCategory",
-    "RelativePath": "api/Category/{CategoryId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "categoryId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "PokemonReviewApp.Models.Category",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      }
-    ]
-  },
-  {
-    "ContainingType": "PokemonReviewApp.Controllers.CategoryController",
     "Method": "GetPokemonByCategoryId",
     "RelativePath": "api/Category/pokemon/{categoryId}",
     "HttpMethod": "GET",
@@ -235,7 +235,7 @@
     "Parameters": [
       {
         "Name": "countryCreate",
-        "Type": "PokemonReviewApp.Dto.CountryDto",
+        "Type": "PokemonReviewApp.Dto.CountryDtoCreate",
         "IsRequired": true
       }
     ],
@@ -379,7 +379,7 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.CountryController",
     "Method": "GetCountryOfAnOwner",
-    "RelativePath": "api/Country/{owners}/ownerId",
+    "RelativePath": "api/Country/owner/{ownerId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -387,11 +387,6 @@
       {
         "Name": "ownerId",
         "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "owners",
-        "Type": "",
         "IsRequired": true
       }
     ],
@@ -451,7 +446,7 @@
       },
       {
         "Name": "ownerCreate",
-        "Type": "PokemonReviewApp.Dto.OwnerDto",
+        "Type": "PokemonReviewApp.Dto.OwnerDtoCreate",
         "IsRequired": true
       }
     ],
@@ -459,7 +454,7 @@
       {
         "Type": "System.Void",
         "MediaTypes": [],
-        "StatusCode": 204
+        "StatusCode": 201
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -667,7 +662,7 @@
       },
       {
         "Name": "pokemonCreate",
-        "Type": "PokemonReviewApp.Dto.PokemonDto",
+        "Type": "PokemonReviewApp.Dto.PokemonDtoCreate",
         "IsRequired": true
       }
     ],
@@ -720,6 +715,51 @@
           "text/json"
         ],
         "StatusCode": 400
+      }
+    ]
+  },
+  {
+    "ContainingType": "PokemonReviewApp.Controllers.PokemonController",
+    "Method": "UpdatePokemon",
+    "RelativePath": "api/Pokemon/{pokeId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pokeId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedPokemon",
+        "Type": "PokemonReviewApp.Dto.PokemonDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
       }
     ]
   },
@@ -799,56 +839,6 @@
     ]
   },
   {
-    "ContainingType": "PokemonReviewApp.Controllers.PokemonController",
-    "Method": "UpdatePokemoon",
-    "RelativePath": "api/Pokemon/{pokemonId}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "pokeId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "updatedPokemon",
-        "Type": "PokemonReviewApp.Dto.PokemonDto",
-        "IsRequired": true
-      },
-      {
-        "Name": "pokemonId",
-        "Type": "",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 204
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 400
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ]
-  },
-  {
     "ContainingType": "PokemonReviewApp.Controllers.ReviewController",
     "Method": "GetReviews",
     "RelativePath": "api/Review",
@@ -888,7 +878,7 @@
       },
       {
         "Name": "reviewCreate",
-        "Type": "PokemonReviewApp.Dto.ReviewDto",
+        "Type": "PokemonReviewApp.Dto.ReviewDtoCreate",
         "IsRequired": true
       }
     ],
@@ -1094,7 +1084,7 @@
     "Parameters": [
       {
         "Name": "reviewerCreate",
-        "Type": "PokemonReviewApp.Dto.ReviewerDto",
+        "Type": "PokemonReviewApp.Dto.ReviewerDtoCreate",
         "IsRequired": true
       }
     ],

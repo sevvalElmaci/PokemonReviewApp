@@ -72,7 +72,7 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
 
-        public IActionResult CreateReviewer([FromBody] ReviewerDto reviewerCreate)
+        public IActionResult CreateReviewer([FromBody] ReviewerDtoCreate reviewerCreate)
         {
             if (reviewerCreate == null)
                 return BadRequest(ModelState);
@@ -115,10 +115,10 @@ namespace PokemonReviewApp.Controllers
                 return BadRequest(ModelState);
 
             if (reviewerId != updatedReviewer.Id)
-                return BadRequest(ModelState);
+                return BadRequest("That ID duo are not matching");
 
             if (!_reviewerRepository.ReviewerExists(reviewerId))
-                return NotFound();
+                return NotFound("Reviewer with that id not found");
 
             if (!ModelState.IsValid)
                 return BadRequest();

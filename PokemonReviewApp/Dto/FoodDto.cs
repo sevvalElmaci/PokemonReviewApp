@@ -1,15 +1,13 @@
 ﻿namespace PokemonReviewApp.Dto
 {
-    public class PokemonDto
+    public class FoodDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public DateTime BirthDate { get; set; }
     }
 
-    public class PokemonDtoCreate
+    public class FoodDtoCreate
     {
         public string Name { get; set; }
-        public DateTime BirthDate { get; set; }
     }
 }
