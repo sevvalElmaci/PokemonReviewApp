@@ -1,7 +1,6 @@
 ﻿using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using System.Xml.Linq;
 
 namespace PokemonReviewApp.Repository
 {
@@ -12,11 +11,28 @@ namespace PokemonReviewApp.Repository
         {
             _context = context;
         }
+        public Category GetCategory(int id)
+        {
+            return _context.Categories
+                .Where(e => e.Id == id)
+                .FirstOrDefault();
+        }
+        public ICollection<Category> GetCategories()
+        {
+            return _context.Categories
+                .ToList();
+        }
+        public ICollection<Pokemon> GetPokemonByCategory(int categoryId)
+        {
+            return _context.PokemonCategories
+                .Where(e => e.CategoryId == categoryId)
+                .Select(c => c.Pokemon).ToList();
+
+        }
         public bool CategoryExist(int id)
         {
             return _context.Categories.Any(c => c.Id == id);
         }
-
         public bool CreateCategory(Category category)
         {
             //Change Tracking: add, update, modify
@@ -32,25 +48,10 @@ namespace PokemonReviewApp.Repository
             _context.Remove(category);
             return Save();
         }
-
-        public ICollection<Category> GetCategories()
+        public bool UpdateCategory(Category category)
         {
-            return _context.Categories
-                .ToList();
-        }
-        public Category GetCategory(int id)
-        {
-            return _context.Categories
-                .Where(e => e.Id == id)
-                .FirstOrDefault();
-        }
-
-        public ICollection<Pokemon> GetPokemonByCategory(int categoryId)
-        {
-            return _context.PokemonCategories
-                .Where(e => e.CategoryId == categoryId)
-                .Select(c => c.Pokemon).ToList();
-
+            _context.Update(category);
+            return Save();
         }
 
         public bool Save()
@@ -59,10 +60,6 @@ namespace PokemonReviewApp.Repository
             return saved > 0 ? true : false;
         }
 
-        public bool UpdateCategory(Category category)
-        {
-            _context.Update(category);
-            return Save();
-        }
+        
     }
 }

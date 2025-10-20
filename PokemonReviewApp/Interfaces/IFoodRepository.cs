@@ -4,8 +4,10 @@ namespace PokemonReviewApp.Interfaces
 {
     public interface IFoodRepository
     {
-
         Food GetFood(int id);
+        ICollection<Food> GetFoods();
+        ICollection<Food> GetFoodsByPokemon(int pokeId);
+        
 
         bool FoodExists(int id);
         bool CreateFood(Food food);

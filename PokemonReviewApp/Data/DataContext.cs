@@ -20,6 +20,8 @@ namespace PokemonReviewApp.Data
         public DbSet<PokemonCategory> PokemonCategories { get; set; }
         public DbSet<Reviewer> Reviewers { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Food> Foods { get; set; }
+        public DbSet<PokeFood> PokeFoods { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         //let me tell you a story about RELATIONSHIPSS of ENTITY
@@ -50,6 +52,16 @@ namespace PokemonReviewApp.Data
 
             //HasOne kullanırken aslında diyorum ki,
             //p için spesifik bir pokemon olsun bu pokemonun özellikleri şöyledir: withmany.. hasforeignkey...
+            modelBuilder.Entity<PokeFood>()
+               .HasKey(pf => new { pf.PokemonId, pf.FoodId });
+            modelBuilder.Entity<PokeFood>()
+                .HasOne(p => p.Pokemon)
+                .WithMany(pf => pf.PokeFoods)
+                .HasForeignKey(p => p.PokemonId);
+            modelBuilder.Entity<PokeFood>()
+                .HasOne(f => f.Food)
+                .WithMany(pf => pf.PokeFoods)
+                .HasForeignKey(f => f.FoodId);
         }
     }
 }

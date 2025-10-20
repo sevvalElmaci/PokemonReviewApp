@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
+using PokemonReviewApp.Repository;
 using System.Data.Entity.Core.Mapping;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
@@ -125,6 +126,12 @@ namespace PokemonReviewApp.Controllers
             {
                 ModelState.AddModelError("", "Something went wrong while updating");
                     return StatusCode(500, ModelState);
+            }
+            if (_countryRepository.GetCountries().Any(f => f.Name.Trim().ToUpper() ==
+           updatedCountry.Name.Trim().ToUpper() && f.Id != countryId))
+            {
+                ModelState.AddModelError("", "A food with the same name already exists");
+                return BadRequest(ModelState);
             }
 
             return NoContent();

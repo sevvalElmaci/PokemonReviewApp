@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
+using PokemonReviewApp.Repository;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace PokemonReviewApp.Controllers
@@ -23,7 +24,8 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         public IActionResult GetCategories()
         {
-            var categories = _mapper.Map<List<CategoryDto>>(_categoryRepository.GetCategories());
+            var categories = _mapper
+                .Map<List<CategoryDto>>(_categoryRepository.GetCategories());
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -38,11 +40,11 @@ namespace PokemonReviewApp.Controllers
         {
             if (!_categoryRepository.CategoryExist(categoryId))
                 return NotFound();
-
-            var category = _mapper.Map<CategoryDto>(_categoryRepository.GetCategory(categoryId));
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var category = _mapper
+                .Map<CategoryDto>(_categoryRepository.GetCategory(categoryId));
 
             return Ok(category);
         }
@@ -69,6 +71,9 @@ namespace PokemonReviewApp.Controllers
             if (categoryCreate == null)
                 return BadRequest(ModelState);
 
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var category = _categoryRepository.GetCategories()
                 .Where(c => c.Name.Trim().ToUpper() == categoryCreate.Name.TrimEnd().ToUpper())
                 .FirstOrDefault();
@@ -77,11 +82,9 @@ namespace PokemonReviewApp.Controllers
                 ModelState.AddModelError("", "Category already exists");
                 return StatusCode(400, ModelState);
             }
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var categoryMap = _mapper.Map<Category>(categoryCreate);
+         
+            var categoryMap = _mapper
+                .Map<Category>(categoryCreate);
 
             if (!_categoryRepository.CreateCategory(categoryMap))
             {
@@ -118,6 +121,12 @@ namespace PokemonReviewApp.Controllers
                 ModelState.AddModelError("", "Something went wrong updating category");
                 return StatusCode(500, ModelState);
             }
+            if (_categoryRepository.GetCategories().Any(f => f.Name.Trim().ToUpper() ==
+           updatedCategory.Name.Trim().ToUpper() && f.Id != categoryId))
+            {
+                ModelState.AddModelError("", "A food with the same name already exists");
+                return BadRequest(ModelState);
+            }
 
             return NoContent();
         }
@@ -134,10 +143,10 @@ namespace PokemonReviewApp.Controllers
                 return NotFound();
             }
 
-            var categoryToDelete = _categoryRepository.GetCategory(categoryId);
-
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var categoryToDelete = _categoryRepository.GetCategory(categoryId);
 
             if (!_categoryRepository.DeleteCategory(categoryToDelete))
             {
@@ -146,6 +155,7 @@ namespace PokemonReviewApp.Controllers
 
                                return StatusCode(500, ModelState);
             }
+
             return NoContent();
         }
 

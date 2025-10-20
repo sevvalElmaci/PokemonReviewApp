@@ -15,7 +15,7 @@ namespace PokemonReviewApp.Repository
             _context = context;
         }
 
-        public bool CreatePokemon(int ownerId, int categoryId, Pokemon pokemon)
+        public bool CreatePokemon(int ownerId, int categoryId, int foodId, Pokemon pokemon)
         {
             var pokemonOwnerEntity = _context.Owners
                 .Where(a => a.Id == ownerId)
@@ -23,30 +23,48 @@ namespace PokemonReviewApp.Repository
             var category = _context.Categories
                 .Where(a => a.Id == categoryId)
                 .FirstOrDefault();
-
-
+            var food = _context.Foods
+                .Where(f => f.Id == foodId)
+                .FirstOrDefault();
 
             var pokemonOwner = new PokemonOwner()
             {
                 Owner = pokemonOwnerEntity,
                 Pokemon = pokemon
             };
-
             _context.Add(pokemonOwner);
+
             var pokemonCategory = new PokemonCategory()
             {
                 Category = category,
                 Pokemon = pokemon,
             };
-
-           return Save();
+            _context.Add(pokemonCategory);
+            var pokeFood = new PokeFood()
+            {
+                Food = food,
+                Pokemon = pokemon,
+            };
+            _context.Add(pokeFood);
+            return Save();
         }
+
 
         public bool DeletePokemon(Pokemon pokemon)
         {
             _context.Remove(pokemon);
             return Save();
         }
+
+        public ICollection<Food> GetFoodsByPokemon(int pokeId)
+        {
+            return _context.PokeFoods
+                .Where(pf => pf.Pokemon.Id == pokeId)
+                .Select(pf => pf.Food)
+                .ToList();
+        }
+
+        
 
         public Pokemon GetPokemon(int id)
         {

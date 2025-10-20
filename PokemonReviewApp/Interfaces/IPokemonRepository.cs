@@ -7,11 +7,13 @@ namespace PokemonReviewApp.Interfaces
     {
         //API CALL
         ICollection<Pokemon> GetPokemons(); //INTERFACE function -> retrieves data from the repository
+        ICollection<Food> GetFoodsByPokemon(int pokeId);
+
         Pokemon GetPokemon(int id);
         Pokemon GetPokemon(string name);
         decimal GetPokemonRating(int pokeId);
         bool PokemonExists(int pokeId);
-        bool CreatePokemon(int ownerId, int categoryId, Pokemon pokemon);
+        bool CreatePokemon(int ownerId, int categoryId, int foodId, Pokemon pokemon);
         bool UpdatePokemon(Pokemon pokemon);
         bool DeletePokemon(Pokemon pokemon);
         bool Save();
