@@ -10,6 +10,8 @@
         public ICollection<PokemonCategory> PokemonCategories { get; set; }
         public ICollection<PokemonOwner> PokemonOwners { get; set; }
         public ICollection<PokeFood> PokeFoods { get; set; }
+        
+        public ICollection<PokeProperty> PokeProperties { get; set; }
         //navigation property
 
 

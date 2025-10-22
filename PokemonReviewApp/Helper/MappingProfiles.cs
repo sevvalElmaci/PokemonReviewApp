@@ -22,6 +22,13 @@ namespace PokemonReviewApp.Helper
             CreateMap<Reviewer, ReviewerDtoCreate>().ReverseMap();
             CreateMap<Food, FoodDto>().ReverseMap();
             CreateMap<Food, FoodDtoCreate>().ReverseMap();
+            CreateMap<PokeFood, PokeFoodDto>().ReverseMap();
+            CreateMap<PokeFood, PokeFoodDtoCreate>().ReverseMap();
+            CreateMap<PokeFood, PokeFoodDto>()
+           .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name))
+           .ForMember(dest => dest.FoodName, opt => opt.MapFrom(src => src.Food.Name))
+           .ReverseMap();
+
         }
     }
 }

@@ -12,8 +12,8 @@ using PokemonReviewApp.Data;
 namespace PokemonReviewApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251020081611_AddFoodTable")]
-    partial class AddFoodTable
+    [Migration("20251022050928_AddQuantityProperty")]
+    partial class AddQuantityProperty
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -103,6 +103,24 @@ namespace PokemonReviewApp.Migrations
                     b.HasIndex("CountryId");
 
                     b.ToTable("Owners");
+                });
+
+            modelBuilder.Entity("PokemonReviewApp.Models.PokeFood", b =>
+                {
+                    b.Property<int>("PokemonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FoodId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.HasKey("PokemonId", "FoodId");
+
+                    b.HasIndex("FoodId");
+
+                    b.ToTable("PokeFoods");
                 });
 
             modelBuilder.Entity("PokemonReviewApp.Models.Pokemon", b =>
@@ -221,6 +239,25 @@ namespace PokemonReviewApp.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("PokemonReviewApp.Models.PokeFood", b =>
+                {
+                    b.HasOne("PokemonReviewApp.Models.Food", "Food")
+                        .WithMany("PokeFoods")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PokemonReviewApp.Models.Pokemon", "Pokemon")
+                        .WithMany("PokeFoods")
+                        .HasForeignKey("PokemonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Food");
+
+                    b.Navigation("Pokemon");
+                });
+
             modelBuilder.Entity("PokemonReviewApp.Models.PokemonCategory", b =>
                 {
                     b.HasOne("PokemonReviewApp.Models.Category", "Category")
@@ -288,6 +325,11 @@ namespace PokemonReviewApp.Migrations
                     b.Navigation("Owners");
                 });
 
+            modelBuilder.Entity("PokemonReviewApp.Models.Food", b =>
+                {
+                    b.Navigation("PokeFoods");
+                });
+
             modelBuilder.Entity("PokemonReviewApp.Models.Owner", b =>
                 {
                     b.Navigation("PokemonOwners");
@@ -295,6 +337,8 @@ namespace PokemonReviewApp.Migrations
 
             modelBuilder.Entity("PokemonReviewApp.Models.Pokemon", b =>
                 {
+                    b.Navigation("PokeFoods");
+
                     b.Navigation("PokemonCategories");
 
                     b.Navigation("PokemonOwners");

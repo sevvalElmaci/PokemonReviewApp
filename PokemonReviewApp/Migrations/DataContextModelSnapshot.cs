@@ -111,6 +111,9 @@ namespace PokemonReviewApp.Migrations
                     b.Property<int>("FoodId")
                         .HasColumnType("int");
 
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
                     b.HasKey("PokemonId", "FoodId");
 
                     b.HasIndex("FoodId");

@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using PokemonReviewApp.Repository;
-using System.Data.Entity.Core.Common.CommandTrees;
-using System.Data.Entity.Migrations.Model;
-using System.Xml.Linq;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 namespace PokemonReviewApp.Controllers
 {
@@ -107,6 +103,9 @@ namespace PokemonReviewApp.Controllers
         //updatedFood: new data for the food. comes from HHTP BODY -json
         {
             if (updatedFood == null)
+                return BadRequest(ModelState);
+
+            if (foodId != updatedFood.Id)
                 return BadRequest(ModelState);
 
             if (foodId != updatedFood.Id)

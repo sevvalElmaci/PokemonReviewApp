@@ -22,6 +22,10 @@ namespace PokemonReviewApp.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Food> Foods { get; set; }
         public DbSet<PokeFood> PokeFoods { get; set; }
+        public DbSet<Property> Properties { get; set; }
+        public DbSet<PokeProperty> PokeProperties { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         //let me tell you a story about RELATIONSHIPSS of ENTITY
@@ -62,6 +66,7 @@ namespace PokemonReviewApp.Data
                 .HasOne(f => f.Food)
                 .WithMany(pf => pf.PokeFoods)
                 .HasForeignKey(f => f.FoodId);
+
         }
     }
 }
