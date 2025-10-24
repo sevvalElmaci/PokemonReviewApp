@@ -1,8 +1,22 @@
-﻿namespace PokemonReviewApp.Dto
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+
+namespace PokemonReviewApp.Dto
 {
     public class PropertyDto
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
+
+    }
+    public class PropertyDtoUpdate
+    {
+        
+        public string Name { get; set; }
+
     }
 }
+
+
+
+

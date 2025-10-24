@@ -67,6 +67,18 @@ namespace PokemonReviewApp.Data
                 .WithMany(pf => pf.PokeFoods)
                 .HasForeignKey(f => f.FoodId);
 
+            modelBuilder.Entity<PokeProperty>()
+                .HasKey(pp => new { pp.PokemonId, pp.PropertyId });
+            modelBuilder.Entity<PokeProperty>()
+                .HasOne(p => p.Pokemon)
+                .WithMany(pp => pp.PokeProperties)
+                .HasForeignKey(p => p.PokemonId);
+            modelBuilder.Entity<PokeProperty>()
+                .HasOne(pr => pr.Property)
+                .WithMany(pp => pp.PokeProperties)
+                .HasForeignKey(pr => pr.PropertyId);
+           
+
         }
     }
 }

@@ -28,6 +28,31 @@ namespace PokemonReviewApp.Helper
            .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name))
            .ForMember(dest => dest.FoodName, opt => opt.MapFrom(src => src.Food.Name))
            .ReverseMap();
+            CreateMap<Property, PropertyDto>().ReverseMap();
+            CreateMap<Property, PropertyDtoUpdate>().ReverseMap();
+            CreateMap<PokeProperty, PokePropertyDto>()
+           .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name))
+           .ForMember(dest => dest.PropertyName, opt => opt.MapFrom(src => src.Property.Name));
+
+            CreateMap<PokeProperty, PokePropertyDtoUpdate>()
+                .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name))
+                .ForMember(dest => dest.PropertyName, opt => opt.MapFrom(src => src.Property.Name));
+            CreateMap<PokeProperty, PokePropertyDto>().ReverseMap();
+            CreateMap<PokeProperty, PokePropertyDtoUpdate>().ReverseMap();
+            CreateMap<PokeProperty, PokePropertyDtoCreate>().ReverseMap();
+            CreateMap   <PokeProperty, PokePropertyDtoUpdateUpdate>().ReverseMap();
+
+
+
+
+
+
+
+
+
+
+
+
 
         }
     }

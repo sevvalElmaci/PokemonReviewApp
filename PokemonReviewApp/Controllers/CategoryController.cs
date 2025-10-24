@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using PokemonReviewApp.Repository;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace PokemonReviewApp.Controllers
@@ -26,10 +25,13 @@ namespace PokemonReviewApp.Controllers
         {
             var categories = _mapper
                 .Map<List<CategoryDto>>(_categoryRepository.GetCategories());
-
+            #region deneme
             if (!ModelState.IsValid)
+
                 return BadRequest(ModelState);
+            #endregion
             return Ok(categories);
+            
 
         }
         [HttpGet("{categoryId}")]

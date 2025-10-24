@@ -12,6 +12,7 @@
         public ICollection<PokeFood> PokeFoods { get; set; }
         
         public ICollection<PokeProperty> PokeProperties { get; set; }
+        //
         //navigation property
 
 

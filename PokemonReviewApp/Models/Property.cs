@@ -6,5 +6,6 @@
         public string Name { get; set; }
 
         public ICollection<PokeProperty> PokeProperties { get; set; }
+        //her property'nin birden fazla pokemona sahip olabilecegini belirtiyoruz
     }
 }

@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
+﻿
+using PokemonReviewApp.Models;
 namespace PokemonReviewApp.Interfaces
 {
     public interface IPropertyRepository
