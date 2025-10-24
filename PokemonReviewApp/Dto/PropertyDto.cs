@@ -9,12 +9,7 @@ namespace PokemonReviewApp.Dto
         public string Name { get; set; }
 
     }
-    public class PropertyDtoUpdate
-    {
-        
-        public string Name { get; set; }
-
-    }
+   
 }
 
 

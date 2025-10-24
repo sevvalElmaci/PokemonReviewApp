@@ -93,7 +93,7 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePokeFood(int pokemonId, int foodId, int quantityId, [FromBody] PokeFoodUpdateDto updatedPF)
+        public IActionResult UpdatePokeFood(int pokemonId, int foodId, int quantityId, [FromBody] PokeFoodDtoUpdate updatedPF)
         {
             if (updatedPF == null)
                 return BadRequest("Invalid request body.");

@@ -74,7 +74,7 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePokeProperty(int pokemonId, int propertyId, [FromBody] PokePropertyDtoUpdateUpdate updatedPP)
+        public IActionResult UpdatePokeProperty(int pokemonId, int propertyId, [FromBody] PokePropertyDtoUpdate updatedPP)
         {
              
         {

@@ -7,9 +7,5 @@
         public DateTime BirthDate { get; set; }
     }
 
-    public class PokemonDtoCreate
-    {
-        public string Name { get; set; }
-        public DateTime BirthDate { get; set; }
-    }
+    
 }

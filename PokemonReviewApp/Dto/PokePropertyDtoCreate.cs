@@ -1,10 +1,8 @@
 ﻿namespace PokemonReviewApp.Dto
 {
-    public class PokePropertyDto
+    public class PokePropertyDtoCreate
     {
         public int PokemonId { get; set; }
-        public string PokemonName { get; set; }    
         public int PropertyId { get; set; }
-        public string PropertyName { get; set; }
     }
 }

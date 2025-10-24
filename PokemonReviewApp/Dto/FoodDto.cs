@@ -6,8 +6,5 @@
         public string Name { get; set; }
     }
 
-    public class FoodDtoCreate
-    {
-        public string Name { get; set; }
-    }
+   
 }

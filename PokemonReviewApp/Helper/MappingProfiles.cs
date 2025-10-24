@@ -34,13 +34,10 @@ namespace PokemonReviewApp.Helper
            .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name))
            .ForMember(dest => dest.PropertyName, opt => opt.MapFrom(src => src.Property.Name));
 
-            CreateMap<PokeProperty, PokePropertyDtoUpdate>()
-                .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name))
-                .ForMember(dest => dest.PropertyName, opt => opt.MapFrom(src => src.Property.Name));
+            
             CreateMap<PokeProperty, PokePropertyDto>().ReverseMap();
             CreateMap<PokeProperty, PokePropertyDtoUpdate>().ReverseMap();
             CreateMap<PokeProperty, PokePropertyDtoCreate>().ReverseMap();
-            CreateMap   <PokeProperty, PokePropertyDtoUpdateUpdate>().ReverseMap();
 
 
 

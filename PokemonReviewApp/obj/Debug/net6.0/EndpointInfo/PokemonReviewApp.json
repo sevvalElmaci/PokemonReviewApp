@@ -1608,17 +1608,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PokeFoodUpdateDto"
+                "$ref": "#/components/schemas/PokeFoodDtoUpdate"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PokeFoodUpdateDto"
+                "$ref": "#/components/schemas/PokeFoodDtoUpdate"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PokeFoodUpdateDto"
+                "$ref": "#/components/schemas/PokeFoodDtoUpdate"
               }
             }
           }
@@ -2184,17 +2184,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PokePropertyDtoUpdateUpdate"
+                "$ref": "#/components/schemas/PokePropertyDtoUpdate"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PokePropertyDtoUpdateUpdate"
+                "$ref": "#/components/schemas/PokePropertyDtoUpdate"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PokePropertyDtoUpdateUpdate"
+                "$ref": "#/components/schemas/PokePropertyDtoUpdate"
               }
             }
           }
@@ -3519,7 +3519,7 @@
         },
         "additionalProperties": false
       },
-      "PokeFoodUpdateDto": {
+      "PokeFoodDtoUpdate": {
         "type": "object",
         "properties": {
           "quantity": {
@@ -3696,7 +3696,7 @@
         },
         "additionalProperties": false
       },
-      "PokePropertyDtoUpdateUpdate": {
+      "PokePropertyDtoUpdate": {
         "type": "object",
         "properties": {
           "pokemonId": {
