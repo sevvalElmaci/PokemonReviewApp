@@ -27,7 +27,9 @@ namespace PokemonReviewApp.Controllers
             _mapper = mapper;
         }
 
+        // ✅ GET: /api/PokeFood
         [HttpGet]
+        [ProducesResponseType(200)]
         public IActionResult GetPokeFoods()
         {
             var pokeFoods = _mapper.Map<List<PokeFoodDto>>(_pokeFoodRepository.GetPokeFoods());
@@ -39,34 +41,34 @@ namespace PokemonReviewApp.Controllers
         {
             var pokeFood = _pokeFoodRepository.GetPokeFood(pokemonId, foodId);
             if (pokeFood == null)
-                return NotFound();
+                return NotFound("Relationship not found.");
 
             return Ok(_mapper.Map<PokeFoodDto>(pokeFood));
         }
 
+        // ✅ POST: /api/PokeFood
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult CreatePokeFood(PokeFoodDtoCreate pokeFood)
+        public IActionResult CreatePokeFood([FromBody] PokeFoodDtoCreate pokeFood)
         {
             if (pokeFood == null)
                 return BadRequest(ModelState);
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            
+
             if (!_pokemonRepository.PokemonExists(pokeFood.PokemonId))
                 return NotFound($"Pokemon with ID {pokeFood.PokemonId} not found.");
 
             if (!_foodRepository.FoodExists(pokeFood.FoodId))
                 return NotFound($"Food with ID {pokeFood.FoodId} not found.");
 
-            
             if (_pokeFoodRepository.PokeFoodExists(pokeFood.PokemonId, pokeFood.FoodId))
                 return BadRequest("This relationship already exists.");
 
-          var pokeFoodMap = _mapper
-                .Map<PokeFood>(pokeFood);
+            var pokeFoodMap = _mapper.Map<PokeFood>(pokeFood);
 
             if (!_pokeFoodRepository.CreatePokeFood(pokeFoodMap))
             {
@@ -74,26 +76,18 @@ namespace PokemonReviewApp.Controllers
                 return StatusCode(500, ModelState);
             }
 
-            return Ok($"Relationship between Pokemon and Food  created successfully.");
-
+            return CreatedAtAction(nameof(GetPokeFood),
+                new { pokemonId = pokeFood.PokemonId, foodId = pokeFood.FoodId },
+                pokeFoodMap);
         }
-        [HttpDelete("{pokemonId}/{foodId}")]
-        public IActionResult DeletePokeFood(int pokemonId, int foodId, int quantityId)
-        {
-            var pokeFood = _pokeFoodRepository.GetPokeFood(pokemonId, foodId);
-            if (pokeFood == null)
-                return NotFound("Relationship not found");
 
-            if (!_pokeFoodRepository.DeletePokeFood(pokeFood))
-                return StatusCode(500, "Something went wrong deleting the relationship");
-
-            return NoContent();
-        }
+        // ✅ PUT: /api/PokeFood/{pokemonId}/{foodId}
+        // Body: { "quantity": 5.0 }
         [HttpPut("{pokemonId:int}/{foodId:int}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePokeFood(int pokemonId, int foodId, int quantityId, [FromBody] PokeFoodDtoUpdate updatedPF)
+        public IActionResult UpdatePokeFood(int pokemonId, int foodId, [FromBody] PokeFoodDtoUpdate updatedPF)
         {
             if (updatedPF == null)
                 return BadRequest("Invalid request body.");
@@ -102,29 +96,28 @@ namespace PokemonReviewApp.Controllers
             if (existing == null)
                 return NotFound($"Relationship with PokemonId={pokemonId} and FoodId={foodId} not found.");
 
-            if (!_pokemonRepository.PokemonExists(updatedPF.ChangedPokemonId))
-                return NotFound($"Pokemon with ID {updatedPF.ChangedPokemonId} not found.");
+            existing.Quantity = updatedPF.Quantity;
 
-            if (!_foodRepository.FoodExists(updatedPF.ChangedFoodId))
-                return NotFound($"Food with ID {updatedPF.ChangedFoodId} not found.");
-
-            if (_pokeFoodRepository.PokeFoodExists(updatedPF.ChangedPokemonId, updatedPF.ChangedFoodId))
-                return BadRequest("This new combination already exists.");
-
-            _pokeFoodRepository.DeletePokeFood(existing);
-
-            var updated = new PokeFood
-            {
-                PokemonId = updatedPF.ChangedPokemonId,
-                FoodId = updatedPF.ChangedFoodId
-            };
-
-            if (!_pokeFoodRepository.CreatePokeFood(updated))
+            if (!_pokeFoodRepository.UpdatePokeFood(existing))
                 return StatusCode(500, "Something went wrong while updating the relationship.");
 
-            return Ok($"Relationship updated successfully from ({pokemonId},{foodId}) to ({updatedPF.ChangedPokemonId},{updatedPF.ChangedFoodId}).");
+            return NoContent(); // 204 - success without body
         }
 
+       
+        [HttpDelete("{pokemonId:int}/{foodId:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeletePokeFood(int pokemonId, int foodId)
+        {
+            var pokeFood = _pokeFoodRepository.GetPokeFood(pokemonId, foodId);
+            if (pokeFood == null)
+                return NotFound("Relationship not found.");
 
+            if (!_pokeFoodRepository.DeletePokeFood(pokeFood))
+                return StatusCode(500, "Something went wrong deleting the relationship.");
+
+            return NoContent();
+        }
     }
 }

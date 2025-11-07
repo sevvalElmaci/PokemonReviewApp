@@ -797,15 +797,16 @@
         }
       }
     },
-    "/api/Food/foodId": {
+    "/api/Food/{id}": {
       "get": {
         "tags": [
           "Food"
         ],
         "parameters": [
           {
-            "name": "foodId",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -861,8 +862,9 @@
         ],
         "parameters": [
           {
-            "name": "foodId",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -940,8 +942,9 @@
         ],
         "parameters": [
           {
-            "name": "foodId",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1161,14 +1164,14 @@
         }
       }
     },
-    "/api/Owner/{ownerId}": {
+    "/api/Owner/{id}": {
       "get": {
         "tags": [
           "Owner"
         ],
         "parameters": [
           {
-            "name": "ownerId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -1226,7 +1229,7 @@
         ],
         "parameters": [
           {
-            "name": "ownerId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -1306,7 +1309,7 @@
         ],
         "parameters": [
           {
-            "name": "ownerId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -1362,14 +1365,14 @@
         }
       }
     },
-    "/api/Owner/{ownerId}/pokemon": {
+    "/api/Owner/{id}/pokemon": {
       "get": {
         "tags": [
           "Owner"
         ],
         "parameters": [
           {
-            "name": "ownerId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -1534,44 +1537,6 @@
           }
         }
       },
-      "delete": {
-        "tags": [
-          "PokeFood"
-        ],
-        "parameters": [
-          {
-            "name": "pokemonId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "foodId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "quantityId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
       "put": {
         "tags": [
           "PokeFood"
@@ -1590,14 +1555,6 @@
             "name": "foodId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "quantityId",
-            "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1624,7 +1581,7 @@
           }
         },
         "responses": {
-          "200": {
+          "204": {
             "description": "Success"
           },
           "400": {
@@ -1646,6 +1603,56 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PokeFood"
+        ],
+        "parameters": [
+          {
+            "name": "pokemonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "foodId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
           },
           "404": {
             "description": "Not Found",
@@ -2595,7 +2602,7 @@
             }
           },
           {
-            "name": "pokeId",
+            "name": "pokemonId",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -2623,7 +2630,7 @@
           }
         },
         "responses": {
-          "204": {
+          "201": {
             "description": "Success"
           },
           "400": {
@@ -2649,14 +2656,14 @@
         }
       }
     },
-    "/api/Review/{reviewId}": {
+    "/api/Review/{id}": {
       "get": {
         "tags": [
           "Review"
         ],
         "parameters": [
           {
-            "name": "reviewId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -2714,7 +2721,7 @@
         ],
         "parameters": [
           {
-            "name": "reviewId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -2794,7 +2801,7 @@
         ],
         "parameters": [
           {
-            "name": "reviewId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -3505,8 +3512,8 @@
         "type": "object",
         "properties": {
           "quantity": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "double"
           },
           "pokemonId": {
             "type": "integer",
@@ -3523,16 +3530,8 @@
         "type": "object",
         "properties": {
           "quantity": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "changedPokemonId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "changedFoodId": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

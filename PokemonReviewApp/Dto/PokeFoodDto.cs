@@ -2,7 +2,7 @@
 {
     public class PokeFoodDto
     {
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
 
         public int PokemonId { get; set; }
         public int FoodId { get; set; }

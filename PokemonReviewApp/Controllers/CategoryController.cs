@@ -4,6 +4,8 @@ using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
+using PokemonReviewApp.Helpers;
+
 
 namespace PokemonReviewApp.Controllers
 {
@@ -113,22 +115,39 @@ namespace PokemonReviewApp.Controllers
 
             if (!_categoryRepository.CategoryExist(categoryId))
                 return NotFound();
+
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var categoryMap = _mapper.Map<Category>(updatedCategory);
+            var allCategories = _categoryRepository.GetCategories();
+            bool duplicateExists = DuplicateCheckHelper.ExistsDuplicate(
+                allCategories,
+                c => c.Name,
+                updatedCategory.Name,
+                categoryId,
+                c => c.Id
+            );
 
-            if (!_categoryRepository.UpdateCategory(categoryMap))
+            if (duplicateExists)
+            {
+                ModelState.AddModelError("", "A category with the same name already exists");
+                return Conflict(ModelState);
+            }
+
+
+            var existingCategory = _categoryRepository.GetCategory(categoryId);
+            if (existingCategory == null)
+                return NotFound();
+
+            existingCategory.Name = updatedCategory.Name;
+
+            if (!_categoryRepository.UpdateCategory(existingCategory))
             {
                 ModelState.AddModelError("", "Something went wrong updating category");
                 return StatusCode(500, ModelState);
             }
-            if (_categoryRepository.GetCategories().Any(f => f.Name.Trim().ToUpper() ==
-           updatedCategory.Name.Trim().ToUpper() && f.Id != categoryId))
-            {
-                ModelState.AddModelError("", "A food with the same name already exists");
-                return BadRequest(ModelState);
-            }
+
+
 
             return NoContent();
         }

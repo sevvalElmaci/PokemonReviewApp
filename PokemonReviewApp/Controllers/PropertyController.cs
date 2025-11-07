@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
+using PokemonReviewApp.Helpers;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 using Deneme = PokemonReviewApp.Models;
@@ -97,15 +98,19 @@ namespace PokemonReviewApp.Controllers
             if (existing == null)
                 return NotFound("Property not found.");
 
-            // 2️⃣ Aynı isimde ve id’si farklı başka bir property var mı kontrol et
-            var duplicate = _propertyRepository
-                .GetProperties()
-                .FirstOrDefault(p =>
-                    p.Name.Trim().ToLower() == updatedProperty.Name.Trim().ToLower() &&
-                    p.Id != propertyId);
+            bool duplicateExists = DuplicateCheckHelper.ExistsDuplicate(
+    _propertyRepository.GetProperties(),
+    p => p.Name,
+    updatedProperty.Name,
+    propertyId,
+    p => p.Id
+);
+            if (duplicateExists)
+            {
+                ModelState.AddModelError("", "A property with the same name already exists");
+                return Conflict(ModelState);
+            }
 
-            if (duplicate != null)
-                return BadRequest("A property with the same name already exists.");
 
             // 3️⃣ Mevcut entity'yi güncelle (tracked durumda)
             _mapper.Map(updatedProperty, existing);

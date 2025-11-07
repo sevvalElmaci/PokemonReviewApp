@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
+using PokemonReviewApp.Helpers;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 using PokemonReviewApp.Repository;
@@ -67,10 +68,10 @@ namespace PokemonReviewApp.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public IActionResult CreateCountry([FromBody] CountryDtoCreate countryCreate) 
-        { 
-            if(countryCreate == null)
-            return BadRequest(ModelState);
+        public IActionResult CreateCountry([FromBody] CountryDtoCreate countryCreate)
+        {
+            if (countryCreate == null)
+                return BadRequest(ModelState);
 
             var country = _countryRepository.GetCountries()
                 .Where(c => c.Name.Trim().ToUpper() == countryCreate.Name.TrimEnd().ToUpper())
@@ -90,8 +91,8 @@ namespace PokemonReviewApp.Controllers
 
             if ((!_countryRepository.CreateCountry(countryMap)))
             {
-                ModelState.AddModelError("","Something went wrong while saving");
-                return StatusCode(500, ModelState); 
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
             }
 
             return Ok("Successfully created");
@@ -120,24 +121,41 @@ namespace PokemonReviewApp.Controllers
             // are data correct or not based on model state rules and protocols
             //control line yaniii
 
-            var countryMap = _mapper.Map<Country>(updatedCountry);
+            bool duplicateExists = DuplicateCheckHelper.ExistsDuplicate(
+    _countryRepository.GetCountries(),
+    c => c.Name,
+    updatedCountry.Name,
+    countryId,
+    c => c.Id
+);
+            if (duplicateExists)
+            {
+                ModelState.AddModelError("", "A country with the same name already exists");
+                return Conflict(ModelState);
+            }
 
-            if (!_countryRepository.UpdateCountry(countryMap))
+            //  Mevcut entity’yi getirip alanlarını güncelle
+            var existingCountry = _countryRepository.GetCountry(countryId);
+            if (existingCountry == null)
+                return NotFound();
+
+            existingCountry.Name = updatedCountry.Name;
+
+            // EF zaten tracked olduğu için yeni nesne oluşturma
+            if (!_countryRepository.UpdateCountry(existingCountry))
             {
                 ModelState.AddModelError("", "Something went wrong while updating");
-                    return StatusCode(500, ModelState);
+                return StatusCode(500, ModelState);
             }
-            if (_countryRepository.GetCountries().Any(f => f.Name.Trim().ToUpper() ==
-           updatedCountry.Name.Trim().ToUpper() && f.Id != countryId))
-            {
-                ModelState.AddModelError("", "A food with the same name already exists");
-                return BadRequest(ModelState);
-            }
-
             return NoContent();
             //Put method does not return any content after updating 
             //cause you didnt create anything new
             // you just updated existing one
+            //mappleme : DTO -> entity
+
+            //update için mappleme yapmıyoruz, çünkü EF'in izlediği (tracked ettiği) bir entity var zaten
+            //DTO'dan yeni bir entity oluşturursan Ef der ki: BEN HANGİSİNİ İZLİYİM??
+            //update için mevcut entity'i manuel güncellemek mantıklıdır.
         }
 
 
@@ -148,7 +166,7 @@ namespace PokemonReviewApp.Controllers
 
         public IActionResult DeleteCountry(int countryId)
         {
-            if(!_countryRepository.CountryExists(countryId))
+            if (!_countryRepository.CountryExists(countryId))
             {
                 return NotFound();
             }

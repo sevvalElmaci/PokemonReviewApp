@@ -464,51 +464,16 @@
   },
   {
     "ContainingType": "PokemonReviewApp.Controllers.FoodController",
-    "Method": "GetFoodsByPokemon",
-    "RelativePath": "api/Food/by-pokemon/{pokeId}",
+    "Method": "GetFood",
+    "RelativePath": "api/Food/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "pokeId",
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[PokemonReviewApp.Dto.FoodDto, PokemonReviewApp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      }
-    ]
-  },
-  {
-    "ContainingType": "PokemonReviewApp.Controllers.FoodController",
-    "Method": "GetFood",
-    "RelativePath": "api/Food/foodId",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "foodId",
-        "Type": "System.Int32",
-        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -535,15 +500,15 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.FoodController",
     "Method": "UpdateFood",
-    "RelativePath": "api/Food/foodId",
+    "RelativePath": "api/Food/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "foodId",
+        "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       },
       {
         "Name": "updatedFood",
@@ -580,15 +545,15 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.FoodController",
     "Method": "DeleteFood",
-    "RelativePath": "api/Food/foodId",
+    "RelativePath": "api/Food/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "foodId",
+        "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
@@ -614,6 +579,41 @@
           "text/json"
         ],
         "StatusCode": 400
+      }
+    ]
+  },
+  {
+    "ContainingType": "PokemonReviewApp.Controllers.FoodController",
+    "Method": "GetFoodsByPokemon",
+    "RelativePath": "api/Food/by-pokemon/{pokeId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pokeId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[PokemonReviewApp.Dto.FoodDto, PokemonReviewApp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
       }
     ]
   },
@@ -676,13 +676,13 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.OwnerController",
     "Method": "GetOwner",
-    "RelativePath": "api/Owner/{ownerId}",
+    "RelativePath": "api/Owner/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "ownerId",
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -711,13 +711,13 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.OwnerController",
     "Method": "UpdateOwner",
-    "RelativePath": "api/Owner/{ownerId}",
+    "RelativePath": "api/Owner/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "ownerId",
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       },
@@ -756,13 +756,13 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.OwnerController",
     "Method": "DeleteOwner",
-    "RelativePath": "api/Owner/{ownerId}",
+    "RelativePath": "api/Owner/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "ownerId",
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -796,13 +796,13 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.OwnerController",
     "Method": "GetPokemonByOwner",
-    "RelativePath": "api/Owner/{ownerId}/pokemon",
+    "RelativePath": "api/Owner/{id}/pokemon",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "ownerId",
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -836,7 +836,13 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "PokemonReviewApp.Controllers.PokeFoodController",
@@ -901,32 +907,6 @@
   },
   {
     "ContainingType": "PokemonReviewApp.Controllers.PokeFoodController",
-    "Method": "DeletePokeFood",
-    "RelativePath": "api/PokeFood/{pokemonId}/{foodId}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "pokemonId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "foodId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "quantityId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "PokemonReviewApp.Controllers.PokeFoodController",
     "Method": "UpdatePokeFood",
     "RelativePath": "api/PokeFood/{pokemonId}/{foodId}",
     "HttpMethod": "PUT",
@@ -944,11 +924,6 @@
         "IsRequired": true
       },
       {
-        "Name": "quantityId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "updatedPF",
         "Type": "PokemonReviewApp.Dto.PokeFoodDtoUpdate",
         "IsRequired": true
@@ -958,7 +933,7 @@
       {
         "Type": "System.Void",
         "MediaTypes": [],
-        "StatusCode": 200
+        "StatusCode": 204
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -968,6 +943,42 @@
           "text/json"
         ],
         "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ]
+  },
+  {
+    "ContainingType": "PokemonReviewApp.Controllers.PokeFoodController",
+    "Method": "DeletePokeFood",
+    "RelativePath": "api/PokeFood/{pokemonId}/{foodId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pokemonId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "foodId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 204
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -1539,7 +1550,7 @@
         "IsRequired": false
       },
       {
-        "Name": "pokeId",
+        "Name": "pokemonId",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -1553,7 +1564,7 @@
       {
         "Type": "System.Void",
         "MediaTypes": [],
-        "StatusCode": 204
+        "StatusCode": 201
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -1569,13 +1580,13 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.ReviewController",
     "Method": "GetReview",
-    "RelativePath": "api/Review/{reviewId}",
+    "RelativePath": "api/Review/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "reviewId",
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -1604,13 +1615,13 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.ReviewController",
     "Method": "UpdateReview",
-    "RelativePath": "api/Review/{reviewId}",
+    "RelativePath": "api/Review/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "reviewId",
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       },
@@ -1649,13 +1660,13 @@
   {
     "ContainingType": "PokemonReviewApp.Controllers.ReviewController",
     "Method": "DeleteReview",
-    "RelativePath": "api/Review/{reviewId}",
+    "RelativePath": "api/Review/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "reviewId",
+        "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
       }
