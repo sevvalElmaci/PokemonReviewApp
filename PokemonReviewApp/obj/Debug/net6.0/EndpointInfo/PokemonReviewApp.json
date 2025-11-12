@@ -2051,6 +2051,63 @@
         }
       }
     },
+    "/api/Pokemon/create-with-log": {
+      "post": {
+        "tags": [
+          "Pokemon"
+        ],
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "foodId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PokemonDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PokemonDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PokemonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/PokeProperties": {
       "get": {
         "tags": [
@@ -3280,6 +3337,38 @@
       "Category": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "id": {
             "type": "integer",
             "format": "int32"
@@ -3325,6 +3414,38 @@
       "Country": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "id": {
             "type": "integer",
             "format": "int32"
@@ -3370,6 +3491,38 @@
       "Food": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "id": {
             "type": "integer",
             "format": "int32"
@@ -3415,6 +3568,38 @@
       "Owner": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "id": {
             "type": "integer",
             "format": "int32"
@@ -3487,6 +3672,38 @@
       "PokeFood": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "pokemonId": {
             "type": "integer",
             "format": "int32"
@@ -3539,6 +3756,38 @@
       "Pokemon": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "id": {
             "type": "integer",
             "format": "int32"
@@ -3592,6 +3841,38 @@
       "PokemonCategory": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "pokemonId": {
             "type": "integer",
             "format": "int32"
@@ -3644,6 +3925,38 @@
       "PokemonOwner": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "pokemonId": {
             "type": "integer",
             "format": "int32"
@@ -3664,6 +3977,38 @@
       "PokeProperty": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "pokemonId": {
             "type": "integer",
             "format": "int32"
@@ -3747,6 +4092,38 @@
       "Property": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "id": {
             "type": "integer",
             "format": "int32"
@@ -3778,6 +4155,38 @@
       "Review": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "id": {
             "type": "integer",
             "format": "int32"
@@ -3846,6 +4255,38 @@
       "Reviewer": {
         "type": "object",
         "properties": {
+          "createdUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "deletedUserId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "deletedDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "id": {
             "type": "integer",
             "format": "int32"

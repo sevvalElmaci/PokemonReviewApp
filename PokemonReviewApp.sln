@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36511.14 d17.14
+VisualStudioVersion = 17.14.36511.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokemonReviewApp", "PokemonReviewApp\PokemonReviewApp.csproj", "{CBAA295C-2BBC-4934-9C2E-4293A9494F2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokemonWorkerService", "PokemonWorkerService\PokemonWorkerService.csproj", "{1D5CAA7F-615A-45F3-B909-5E42D72FAE1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{CBAA295C-2BBC-4934-9C2E-4293A9494F2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBAA295C-2BBC-4934-9C2E-4293A9494F2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBAA295C-2BBC-4934-9C2E-4293A9494F2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D5CAA7F-615A-45F3-B909-5E42D72FAE1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D5CAA7F-615A-45F3-B909-5E42D72FAE1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D5CAA7F-615A-45F3-B909-5E42D72FAE1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D5CAA7F-615A-45F3-B909-5E42D72FAE1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

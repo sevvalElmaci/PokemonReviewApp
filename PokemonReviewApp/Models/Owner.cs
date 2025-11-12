@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PokemonReviewApp.Models
 {
-    public class Owner
+    public class Owner : AuditEntityBase
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 

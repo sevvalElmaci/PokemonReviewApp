@@ -1,6 +1,6 @@
 ﻿namespace PokemonReviewApp.Models
 {
-    public class Pokemon
+    public class Pokemon : AuditEntityBase
     {
         //Models are just representative database tables (database table like an excel sheet)
         public int Id { get; set; }

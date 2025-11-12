@@ -21,6 +21,8 @@ builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 builder.Services.AddScoped<IPokeFoodRepository, PokeFoodRepository>();
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 builder.Services.AddScoped<IPokePropertiesRepository, PokePropertyRepository>();
+builder.Services.AddHttpContextAccessor();
+
 
 
 

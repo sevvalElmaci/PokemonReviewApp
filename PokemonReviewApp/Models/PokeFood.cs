@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PokemonReviewApp.Models
 {
-    public class PokeFood
+    public class PokeFood : AuditEntityBase
     {
         public int PokemonId { get; set; }
         public int FoodId { get; set; }

@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PokemonReviewApp.Data;
+﻿using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using System.Reflection.Metadata.Ecma335;
-using System.Xml.Linq;
+
 
 namespace PokemonReviewApp.Repository
 {
@@ -13,6 +11,53 @@ namespace PokemonReviewApp.Repository
         public PokemonRepository(DataContext context)
         {
             _context = context;
+        }
+
+        public bool CreatePokemonWithLog(int ownerId, int categoryId, int foodId, Pokemon pokemon)
+        {
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var ownerEntity = _context.Owners.FirstOrDefault(o => o.Id == ownerId);
+                var categoryEntity = _context.Categories.FirstOrDefault(c => c.Id == categoryId);
+                var foodEntity = _context.Foods.FirstOrDefault(f => f.Id == foodId);
+
+                if (ownerEntity == null || categoryEntity == null || foodEntity == null)
+                    throw new Exception("Invalid related entity");
+
+                var pokemonOwner = new PokemonOwner { Owner = ownerEntity, Pokemon = pokemon };
+                var pokemonCategory = new PokemonCategory { Category = categoryEntity, Pokemon = pokemon };
+                var pokeFood = new PokeFood { Food = foodEntity, Pokemon = pokemon };
+
+
+                _context.Add(pokemonOwner);
+                _context.Add(pokeFood);
+                _context.Add(pokemonCategory);
+                _context.Add(pokemon);
+                _context.SaveChanges();
+
+                var pokemonLog = new PokemonLog
+                {
+                    PokemonId = pokemon.Id,
+                    Name = pokemon.Name,
+                    OwnerId = ownerEntity.Id,
+                    CreatedDateTime = DateTime.Now,
+                    CreatedUserId = 1 // JWT gelince değişcek
+                };
+
+                _context.PokemonLogs.Add(pokemonLog);
+                _context.SaveChanges();
+
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                Console.WriteLine($"[Transaction Failed] {ex.Message}");
+                return false;
+            }
+
         }
 
         public bool CreatePokemon(int ownerId, int categoryId, int foodId, Pokemon pokemon)
@@ -64,7 +109,7 @@ namespace PokemonReviewApp.Repository
                 .ToList();
         }
 
-        
+
 
         public Pokemon GetPokemon(int id)
         {
@@ -83,7 +128,7 @@ namespace PokemonReviewApp.Repository
         {
             var review = _context.Reviews
                 .Where(p => p.Pokemon.Id == pokeId);
-            if (review.Count() <= 0 )
+            if (review.Count() <= 0)
             {
                 return 0;
 
@@ -121,5 +166,5 @@ namespace PokemonReviewApp.Repository
     }
 
 }
-    
+
 

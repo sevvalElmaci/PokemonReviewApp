@@ -1213,6 +1213,37 @@
     ]
   },
   {
+    "ContainingType": "PokemonReviewApp.Controllers.PokemonController",
+    "Method": "CreatePokemonWithLog",
+    "RelativePath": "api/Pokemon/create-with-log",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ownerId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "categoryId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "foodId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pokemonDto",
+        "Type": "PokemonReviewApp.Dto.PokemonDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "PokemonReviewApp.Controllers.PokePropertiesController",
     "Method": "GetPokeProperties",
     "RelativePath": "api/PokeProperties",

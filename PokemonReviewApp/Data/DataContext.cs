@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PokemonReviewApp.Models;
+using System.Linq.Expressions;
+using System.Security.Claims;
+using static System.Net.WebRequestMethods;
 namespace PokemonReviewApp.Data
 {
 
@@ -9,8 +12,11 @@ namespace PokemonReviewApp.Data
 
     public class DataContext : DbContext //inherit from Dbcontext
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        private readonly IHttpContextAccessor _http;
+
+        public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor http) : base(options)
         {
+            _http = http;
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Country> Countries { get; set; }
@@ -24,6 +30,18 @@ namespace PokemonReviewApp.Data
         public DbSet<PokeFood> PokeFoods { get; set; }
         public DbSet<Property> Properties { get; set; }
         public DbSet<PokeProperty> PokeProperties { get; set; }
+        public DbSet<UserLog> UserLogs { get; set; }
+        public DbSet<PokemonLog> PokemonLogs { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
+
+
+
+
+
 
 
 
@@ -77,8 +95,122 @@ namespace PokemonReviewApp.Data
                 .HasOne(pr => pr.Property)
                 .WithMany(pp => pp.PokeProperties)
                 .HasForeignKey(pr => pr.PropertyId);
-           
+
+
+            // UserRole (Many-to-Many)
+            modelBuilder.Entity<UserRole>()
+                .HasKey(ur => new { ur.UserId, ur.RoleId });
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId);
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId);
+
+            // RolePermission (Many-to-Many)
+            modelBuilder.Entity<RolePermission>()
+                .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Role)
+                .WithMany(r => r.RolePermissions)
+                .HasForeignKey(rp => rp.RoleId);
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Permission)
+                .WithMany(p => p.RolePermissions)
+                .HasForeignKey(rp => rp.PermissionId);
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Name = "Admin" },
+                new Role { Id = 2, Name = "Manager" },
+                new Role { Id = 3, Name = "User" }
+                );
+
+            modelBuilder.Entity<Permission>().HasData(
+                new Permission { Id = 1, Name = "ListPokemon" },
+                new Permission { Id = 2, Name = "AddPokemon" },
+                new Permission { Id = 3, Name = "UpdatePokemon" },
+                new Permission { Id = 4, Name = "DeletePokemon" }
+                );
+            modelBuilder.Entity<RolePermission>().HasData(
+    new RolePermission { RoleId = 1, PermissionId = 1 },
+    new RolePermission { RoleId = 1, PermissionId = 2 },
+    new RolePermission { RoleId = 1, PermissionId = 3 },
+    new RolePermission { RoleId = 1, PermissionId = 4 },
+    new RolePermission { RoleId = 2, PermissionId = 1 },
+    new RolePermission { RoleId = 2, PermissionId = 2 },
+    new RolePermission { RoleId = 3, PermissionId = 1 }
+);
+
+
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(AuditEntityBase).IsAssignableFrom(entityType.ClrType))
+                {
+                    var parameter = Expression.Parameter(entityType.ClrType, "e");
+                    var prop = Expression.Property(parameter, nameof(AuditEntityBase.IsDeleted));
+                    var body = Expression.Equal(prop, Expression.Constant(false));
+                    var lambda = Expression.Lambda(body, parameter);
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+                }
+            }
 
         }
+
+        public override int SaveChanges()
+        {
+            ApplyAuditInfo();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ApplyAuditInfo();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ApplyAuditInfo()
+        {
+            int? currentUserId = null;
+            var idClaim = _http?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+            if (idClaim != null && int.TryParse(idClaim.Value, out var parsed)) currentUserId = parsed;
+
+            var entries = ChangeTracker.Entries()
+                .Where(e => e.Entity is AuditEntityBase &&
+                            (e.State == EntityState.Added ||
+                             e.State == EntityState.Modified ||
+                             e.State == EntityState.Deleted));
+
+            var now = DateTime.Now;
+
+            foreach (var entry in entries)
+            {
+                var entity = (AuditEntityBase)entry.Entity;
+
+                if (entry.State == EntityState.Added)
+                {
+                    entity.CreatedDateTime = now;
+                    if (currentUserId.HasValue) entity.CreatedUserId = currentUserId;
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    entity.UpdatedDateTime = now;
+                    if (currentUserId.HasValue) entity.UpdatedUserId = currentUserId;
+                }
+                else if (entry.State == EntityState.Deleted)
+                {
+                    // Soft delete’e çevir
+                    entry.State = EntityState.Modified;
+                    entity.IsDeleted = true;
+                    entity.DeletedDateTime = now;
+                    if (currentUserId.HasValue) entity.DeletedUserId = currentUserId;
+                }
+            }
+        }
     }
+
 }
+
+

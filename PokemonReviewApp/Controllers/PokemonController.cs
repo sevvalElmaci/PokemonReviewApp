@@ -184,6 +184,17 @@ namespace PokemonReviewApp.Controllers
 
         }
 
+        [HttpPost("create-with-log")]
+        public IActionResult CreatePokemonWithLog(int ownerId, int categoryId, int foodId, [FromBody] PokemonDto pokemonDto)
+        {
+            var pokemon = _mapper.Map<Pokemon>(pokemonDto);
+            var result = _pokemonRepository.CreatePokemonWithLog( ownerId,  categoryId,  foodId,  pokemon);
+            if (result)
+                return Ok("Pokemon & PokeLog created succesfully");
+            else
+                return StatusCode(500, "Transaction failed!");
+        }
+
     }
 }
 

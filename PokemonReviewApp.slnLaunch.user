@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "PokemonReviewApp\\PokemonReviewApp.csproj",
+        "Action": "Start",
+        "DebugTarget": "PokemonReviewApp"
+      },
+      {
+        "Path": "PokemonWorkerService\\PokemonWorkerService.csproj",
+        "Action": "Start",
+        "DebugTarget": "PokemonWorkerService"
+      }
+    ]
+  }
+]

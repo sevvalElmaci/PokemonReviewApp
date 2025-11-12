@@ -1,6 +1,6 @@
 ﻿namespace PokemonReviewApp.Models
 {
-    public class Country
+    public class Country : AuditEntityBase
     {
         public int Id { get; set; } 
         public string Name { get; set; }

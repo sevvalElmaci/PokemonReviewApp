@@ -22,7 +22,6 @@ namespace PokemonReviewApp.Helper
             CreateMap<Reviewer, ReviewerDtoCreate>().ReverseMap();
             CreateMap<Food, FoodDto>().ReverseMap();
             CreateMap<Food, FoodDtoCreate>().ReverseMap();
-            CreateMap<PokeFood, PokeFoodDto>().ReverseMap();
             CreateMap<PokeFood, PokeFoodDtoCreate>().ReverseMap();
             CreateMap<PokeFood, PokeFoodDto>()
            .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name))
@@ -38,6 +37,7 @@ namespace PokemonReviewApp.Helper
             CreateMap<PokeProperty, PokePropertyDto>().ReverseMap();
             CreateMap<PokeProperty, PokePropertyDtoUpdate>().ReverseMap();
             CreateMap<PokeProperty, PokePropertyDtoCreate>().ReverseMap();
+
 
 
 

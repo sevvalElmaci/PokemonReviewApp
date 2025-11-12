@@ -2,7 +2,7 @@
 
 namespace PokemonReviewApp.Models
 {
-    public class PokeProperty
+    public class PokeProperty : AuditEntityBase
     {
         [ForeignKey(nameof(Pokemon))]
         public int PokemonId { get; set; }

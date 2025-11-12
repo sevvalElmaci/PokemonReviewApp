@@ -1,6 +1,6 @@
 ﻿namespace PokemonReviewApp.Models
 {
-    public class PokemonCategory
+    public class PokemonCategory : AuditEntityBase
     {
         public int PokemonId { get; set; }
         public int CategoryId { get; set; }
