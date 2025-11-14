@@ -1,9 +1,10 @@
 ﻿namespace PokemonReviewApp.Models
 {
-    public class Permission : AuditEntityBase
+    public class Permission 
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty; // örnek: PokemonListele, PokemonEkle
+        public string PermissionName { get; set; }
+        public string? Description { get; set; }
         public ICollection<RolePermission>? RolePermissions { get; set; }
     }
 }

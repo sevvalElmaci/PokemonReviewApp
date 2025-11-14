@@ -3,8 +3,7 @@ using PokemonReviewApp.Data;
 using PokemonReviewApp;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Repository;
-using PokemonReviewApp.Interfaces;
-using PokemonReviewApp.Repository;
+
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -21,6 +20,12 @@ builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 builder.Services.AddScoped<IPokeFoodRepository, PokeFoodRepository>();
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 builder.Services.AddScoped<IPokePropertiesRepository, PokePropertyRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+
+
 builder.Services.AddHttpContextAccessor();
 
 

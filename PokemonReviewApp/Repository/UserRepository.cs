@@ -14,24 +14,39 @@ namespace PokemonReviewApp.Repository
             _context = context;
         }
 
-        public bool CreateUserWithLog(UserLog userlog)
+        public ICollection<User> GetUsers()
+        {
+            return _context.Users
+                .Include(ur => ur.Role)
+                .OrderBy(u => u.Id) //listed with an order
+                .ToList();
+        }
+
+        public User GetUser(int id)
+        {
+            return _context.Users.FirstOrDefault(u => u.Id == id);
+        }
+        public bool CreateUser(User user)
+        {
+            _context.Add(user);
+            return Save();
+        }
+
+        public User CreateUserWithLog(User user)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
             {
                 // 1️⃣ Ana tabloya kullanıcı ekle
-                _context.Add(userlog);
+                _context.Add(user);
                 _context.SaveChanges();
 
                 // 2️⃣ Log tablosuna aynı kullanıcıdan kayıt oluştur
                 var userLog = new UserLog
                 {
-                    UserId = userlog.Id,
-                    UserName = userlog.UserName,
-                    LastName = userlog.LastName,
-                    Email = userlog.Email,
-                    Phone = userlog.Phone,
-                    CreatedDateTime = DateTime.UtcNow,
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    CreatedDateTime = DateTime.Now,
                     CreatedUserId = 1 // JWT eklenince otomatik alınacak
                 };
                 _context.UserLogs.Add(userLog);
@@ -39,20 +54,40 @@ namespace PokemonReviewApp.Repository
 
                 // 3️⃣ Tüm işlemler başarılı → Commit et
                 transaction.Commit();
-                return true;
+                return user;
             }
             catch (Exception ex)
             {
                 // Hata varsa her şeyi geri al
                 transaction.Rollback();
                 Console.WriteLine($"Transaction failed: {ex.Message}");
-                return false;
+                throw;
             }
         }
 
+        public bool DeleteUser(User user)
+        {
+            _context.Remove(user);
+            return Save();
+
+        }
+
+
         public bool Save()
         {
-            return _context.SaveChanges() > 0;
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
+        }
+
+        public bool UpdateUser(User user)
+        {
+            _context.Update(user);
+            return Save();
+        }
+
+        public bool UserExists(int id)
+        {
+            return _context.Users.Any(u => u.Id == id);
         }
     }
 }

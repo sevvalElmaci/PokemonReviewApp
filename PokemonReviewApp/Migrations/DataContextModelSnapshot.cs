@@ -207,10 +207,13 @@ namespace PokemonReviewApp.Migrations
                     b.Property<int?>("DeletedUserId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("PermissionName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -228,30 +231,226 @@ namespace PokemonReviewApp.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDateTime = new DateTime(2025, 11, 12, 6, 43, 32, 700, DateTimeKind.Utc).AddTicks(1898),
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3016),
                             IsDeleted = false,
-                            Name = "ListPokemon"
+                            PermissionName = "ListCategory"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDateTime = new DateTime(2025, 11, 12, 6, 43, 32, 700, DateTimeKind.Utc).AddTicks(1899),
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3029),
                             IsDeleted = false,
-                            Name = "AddPokemon"
+                            PermissionName = "AddCategory"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDateTime = new DateTime(2025, 11, 12, 6, 43, 32, 700, DateTimeKind.Utc).AddTicks(1900),
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3029),
                             IsDeleted = false,
-                            Name = "UpdatePokemon"
+                            PermissionName = "UpdateCategory"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDateTime = new DateTime(2025, 11, 12, 6, 43, 32, 700, DateTimeKind.Utc).AddTicks(1900),
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3030),
                             IsDeleted = false,
-                            Name = "DeletePokemon"
+                            PermissionName = "DeleteCategory"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3031),
+                            IsDeleted = false,
+                            PermissionName = "ListCountry"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3033),
+                            IsDeleted = false,
+                            PermissionName = "AddCountry"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3034),
+                            IsDeleted = false,
+                            PermissionName = "UpdateCountry"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3035),
+                            IsDeleted = false,
+                            PermissionName = "DeleteCountry"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3035),
+                            IsDeleted = false,
+                            PermissionName = "ListFood"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3037),
+                            IsDeleted = false,
+                            PermissionName = "AddFood"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3038),
+                            IsDeleted = false,
+                            PermissionName = "UpdateFood"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3038),
+                            IsDeleted = false,
+                            PermissionName = "DeleteFood"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3039),
+                            IsDeleted = false,
+                            PermissionName = "ListOwner"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3040),
+                            IsDeleted = false,
+                            PermissionName = "AddOwner"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3041),
+                            IsDeleted = false,
+                            PermissionName = "UpdateOwner"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3041),
+                            IsDeleted = false,
+                            PermissionName = "DeleteOwner"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3042),
+                            IsDeleted = false,
+                            PermissionName = "ListPokemon"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3044),
+                            IsDeleted = false,
+                            PermissionName = "AddPokemon"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3045),
+                            IsDeleted = false,
+                            PermissionName = "UpdatePokemon"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3046),
+                            IsDeleted = false,
+                            PermissionName = "DeletePokemon"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3046),
+                            IsDeleted = false,
+                            PermissionName = "ListProperty"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3047),
+                            IsDeleted = false,
+                            PermissionName = "AddProperty"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3048),
+                            IsDeleted = false,
+                            PermissionName = "UpdateProperty"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3048),
+                            IsDeleted = false,
+                            PermissionName = "DeleteProperty"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3049),
+                            IsDeleted = false,
+                            PermissionName = "ListReview"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3050),
+                            IsDeleted = false,
+                            PermissionName = "AddReview"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3050),
+                            IsDeleted = false,
+                            PermissionName = "UpdateReview"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3051),
+                            IsDeleted = false,
+                            PermissionName = "DeleteReview"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3052),
+                            IsDeleted = false,
+                            PermissionName = "ListReviewer"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3053),
+                            IsDeleted = false,
+                            PermissionName = "AddReviewer"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3053),
+                            IsDeleted = false,
+                            PermissionName = "UpdateReviewer"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3054),
+                            IsDeleted = false,
+                            PermissionName = "DeleteReviewer"
                         });
                 });
 
@@ -645,7 +844,7 @@ namespace PokemonReviewApp.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("RoleName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -663,23 +862,23 @@ namespace PokemonReviewApp.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDateTime = new DateTime(2025, 11, 12, 6, 43, 32, 700, DateTimeKind.Utc).AddTicks(1753),
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3130),
                             IsDeleted = false,
-                            Name = "Admin"
+                            RoleName = "Admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDateTime = new DateTime(2025, 11, 12, 6, 43, 32, 700, DateTimeKind.Utc).AddTicks(1783),
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3131),
                             IsDeleted = false,
-                            Name = "Manager"
+                            RoleName = "Manager"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDateTime = new DateTime(2025, 11, 12, 6, 43, 32, 700, DateTimeKind.Utc).AddTicks(1784),
+                            CreatedDateTime = new DateTime(2025, 11, 14, 11, 51, 57, 223, DateTimeKind.Local).AddTicks(3132),
                             IsDeleted = false,
-                            Name = "User"
+                            RoleName = "User"
                         });
                 });
 
@@ -691,11 +890,489 @@ namespace PokemonReviewApp.Migrations
                     b.Property<int>("PermissionId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedUserId")
+                        .HasColumnType("int");
+
                     b.HasKey("RoleId", "PermissionId");
 
                     b.HasIndex("PermissionId");
 
                     b.ToTable("RolePermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 1,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3215),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 2,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3217),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 3,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3218),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 4,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3218),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 5,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3218),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 6,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3220),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 7,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3220),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 8,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3220),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 9,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3221),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 10,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3222),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 11,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3222),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 12,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3222),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 13,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3223),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 14,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3223),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 15,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3248),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 16,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3248),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 17,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3249),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 18,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3250),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 19,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3250),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 20,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3251),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 21,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3251),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 22,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3251),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 23,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3252),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 24,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3252),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 25,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3252),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 26,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3253),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 27,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3253),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 28,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3253),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 29,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3253),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 30,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3254),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 31,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3254),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 32,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3254),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 1,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3266),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 2,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3269),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 3,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3271),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 5,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3274),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 6,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3275),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 7,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3277),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 9,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3278),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 10,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3279),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 11,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3280),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 13,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3282),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 14,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3282),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 15,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3284),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 17,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3286),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 18,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3287),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 19,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3288),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 21,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3291),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 22,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3292),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 23,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3293),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 25,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3297),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 26,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3298),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 27,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3299),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 29,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3301),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 30,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3302),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 31,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3303),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 1,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3428),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 5,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3429),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 9,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3429),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 13,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3430),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 17,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3430),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 21,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3430),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 25,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3431),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 26,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3431),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 29,
+                            CreatedDateTime = new DateTime(2025, 11, 14, 8, 51, 57, 223, DateTimeKind.Utc).AddTicks(3431),
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("PokemonReviewApp.Models.User", b =>
@@ -725,17 +1402,22 @@ namespace PokemonReviewApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UpdatedUserId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
@@ -760,20 +1442,8 @@ namespace PokemonReviewApp.Migrations
                     b.Property<int?>("DeletedUserId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDateTime")
                         .HasColumnType("datetime2");
@@ -791,21 +1461,6 @@ namespace PokemonReviewApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserLogs");
-                });
-
-            modelBuilder.Entity("PokemonReviewApp.Models.UserRole", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("PokemonReviewApp.Models.Owner", b =>
@@ -933,23 +1588,15 @@ namespace PokemonReviewApp.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("PokemonReviewApp.Models.UserRole", b =>
+            modelBuilder.Entity("PokemonReviewApp.Models.User", b =>
                 {
                     b.HasOne("PokemonReviewApp.Models.Role", "Role")
-                        .WithMany("UserRoles")
+                        .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PokemonReviewApp.Models.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Role");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PokemonReviewApp.Models.Category", b =>
@@ -1004,12 +1651,7 @@ namespace PokemonReviewApp.Migrations
                 {
                     b.Navigation("RolePermissions");
 
-                    b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("PokemonReviewApp.Models.User", b =>
-                {
-                    b.Navigation("UserRoles");
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

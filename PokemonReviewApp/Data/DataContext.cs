@@ -33,7 +33,6 @@ namespace PokemonReviewApp.Data
         public DbSet<UserLog> UserLogs { get; set; }
         public DbSet<PokemonLog> PokemonLogs { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
@@ -49,7 +48,13 @@ namespace PokemonReviewApp.Data
         //let me tell you a story about RELATIONSHIPSS of ENTITY
         // OnModelCreating : special code of DBCONTEXT. it says that, when we create database we define some rules manually.
         //relationship exist with this part. it explains relationships to ENTITY FRAMEWORK
+
+
         {
+            base.OnModelCreating(modelBuilder);
+
+            DbSeeder.Seed(modelBuilder);
+
             modelBuilder.Entity<PokemonCategory>() //Creating join table for pokemon and category.
                 .HasKey(pc => new { pc.PokemonId, pc.CategoryId }); //COMPOSITE KEY -> define unique register with pokemonID and CategoryID
             //Thanks to HasKEY you cant add a same pokemon-category duo.
@@ -96,19 +101,6 @@ namespace PokemonReviewApp.Data
                 .WithMany(pp => pp.PokeProperties)
                 .HasForeignKey(pr => pr.PropertyId);
 
-
-            // UserRole (Many-to-Many)
-            modelBuilder.Entity<UserRole>()
-                .HasKey(ur => new { ur.UserId, ur.RoleId });
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.User)
-                .WithMany(u => u.UserRoles)
-                .HasForeignKey(ur => ur.UserId);
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.Role)
-                .WithMany(r => r.UserRoles)
-                .HasForeignKey(ur => ur.RoleId);
-
             // RolePermission (Many-to-Many)
             modelBuilder.Entity<RolePermission>()
                 .HasKey(rp => new { rp.RoleId, rp.PermissionId });
@@ -120,30 +112,6 @@ namespace PokemonReviewApp.Data
                 .HasOne(rp => rp.Permission)
                 .WithMany(p => p.RolePermissions)
                 .HasForeignKey(rp => rp.PermissionId);
-
-            modelBuilder.Entity<Role>().HasData(
-                new Role { Id = 1, Name = "Admin" },
-                new Role { Id = 2, Name = "Manager" },
-                new Role { Id = 3, Name = "User" }
-                );
-
-            modelBuilder.Entity<Permission>().HasData(
-                new Permission { Id = 1, Name = "ListPokemon" },
-                new Permission { Id = 2, Name = "AddPokemon" },
-                new Permission { Id = 3, Name = "UpdatePokemon" },
-                new Permission { Id = 4, Name = "DeletePokemon" }
-                );
-            modelBuilder.Entity<RolePermission>().HasData(
-    new RolePermission { RoleId = 1, PermissionId = 1 },
-    new RolePermission { RoleId = 1, PermissionId = 2 },
-    new RolePermission { RoleId = 1, PermissionId = 3 },
-    new RolePermission { RoleId = 1, PermissionId = 4 },
-    new RolePermission { RoleId = 2, PermissionId = 1 },
-    new RolePermission { RoleId = 2, PermissionId = 2 },
-    new RolePermission { RoleId = 3, PermissionId = 1 }
-);
-
-
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {

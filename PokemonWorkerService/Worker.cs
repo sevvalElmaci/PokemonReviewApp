@@ -27,25 +27,21 @@ namespace PokemonWorkerService
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-                    var logCount = context.PokemonLogs.Count();
-                    _logger.LogInformation("Current PokemonLogs count: {count}", logCount);
+
+                    // 1️⃣ Count Pokémon Logs
+                    var pokemonLogsCount = await context.PokemonLogs.CountAsync();
+
+                    // 2️⃣ Count User Logs
+                    var userLogsCount = await context.UserLogs.CountAsync();
+
+                    _logger.LogInformation(
+                        "Current PokemonLogs: {pokemonCount} | Current UserLogs: {userCount}",
+                        pokemonLogsCount,
+                        userLogsCount
+                    );
                 }
 
-                while (!stoppingToken.IsCancellationRequested)
-                {
-                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-
-                    using (var scope = _scopeFactory.CreateScope())
-                    {
-                        var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-                        var logCount = context.UserLogs.Count();
-                        _logger.LogInformation("Current PokemonLogs count: {count}", logCount);
-                    }
-
-
-                    await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
-                }
-
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
             }
         }
     }

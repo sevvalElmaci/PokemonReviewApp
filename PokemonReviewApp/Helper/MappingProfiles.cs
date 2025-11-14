@@ -33,10 +33,23 @@ namespace PokemonReviewApp.Helper
            .ForMember(dest => dest.PokemonName, opt => opt.MapFrom(src => src.Pokemon.Name))
            .ForMember(dest => dest.PropertyName, opt => opt.MapFrom(src => src.Property.Name));
 
-            
+
             CreateMap<PokeProperty, PokePropertyDto>().ReverseMap();
             CreateMap<PokeProperty, PokePropertyDtoUpdate>().ReverseMap();
             CreateMap<PokeProperty, PokePropertyDtoCreate>().ReverseMap();
+            CreateMap<User, UserDto>()
+    .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
+    .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.RoleId));
+
+
+            CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<UserCreateDto, User>().ReverseMap();
+            CreateMap<UserUpdateDto, User>().ReverseMap();
+            CreateMap<Role, RoleDto>().ReverseMap();
+            CreateMap<RoleCreateDto, Role>().ReverseMap();
+            CreateMap<Permission, PermissionDto>().ReverseMap();
+            CreateMap<PermissionCreateDto, Permission>().ReverseMap();
+
 
 
 
