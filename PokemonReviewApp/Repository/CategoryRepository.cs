@@ -1,13 +1,14 @@
-﻿using PokemonReviewApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 
 namespace PokemonReviewApp.Repository
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
         private DataContext  _context;
-        public CategoryRepository(DataContext context)
+        public CategoryRepository(DataContext context) : base(context) 
         {
             _context = context;
         }
@@ -17,6 +18,13 @@ namespace PokemonReviewApp.Repository
                 .Where(e => e.Id == id)
                 .FirstOrDefault();
         }
+        public void RestoreCategory(Category category)
+        {
+            category.IsDeleted = false;
+            category.DeletedDateTime = null;
+            _context.Update(category);
+        }
+
         public ICollection<Category> GetCategories()
         {
             return _context.Categories
@@ -43,11 +51,11 @@ namespace PokemonReviewApp.Repository
             return Save();
         }
 
-        public bool DeleteCategory(Category category)
-        {
-            _context.Remove(category);
-            return Save();
-        }
+        //public bool DeleteCategory(Category category)
+        //{
+        //    _context.Remove(category);
+        //    return Save();
+        //}
         public bool UpdateCategory(Category category)
         {
             _context.Update(category);
@@ -60,6 +68,20 @@ namespace PokemonReviewApp.Repository
             return saved > 0 ? true : false;
         }
 
-        
+        public Category GetCategoryIncludingDeleted(int id)
+        {
+            return _context.Categories
+        .IgnoreQueryFilters()
+        .FirstOrDefault(c => c.Id == id);
+        }
+
+        public ICollection<Category> GetDeletedCategories()
+        {
+            return _context.Categories
+                   .IgnoreQueryFilters()       // soft delete filtresini geçici kapat
+                   .Where(c => c.IsDeleted)    // sadece silinmiş olanlar
+                   .OrderBy(c => c.Id)
+                   .ToList();
+        }
     }
 }

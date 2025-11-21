@@ -5,14 +5,25 @@ namespace PokemonReviewApp
 {
     public class Seed
     {
-        private readonly DataContext dataContext;
+        private readonly DataContext _context;
         public Seed(DataContext context)
         {
-            this.dataContext = context;
+            _context = context;
         }
         public void SeedDataContext()
         {
-            if (!dataContext.PokemonOwners.Any())
+            if (!_context.Users.Any())
+            {
+                _context.Users.Add(new User
+                {
+                    UserName = "admin",
+                    Password = "adminadmin"
+                });
+
+                _context.SaveChanges();
+            }
+
+            if (!_context.PokemonOwners.Any())
                 //veritabanında hiç pokemonowner yoksa
             {
                 var pokemonOwners = new List<PokemonOwner>()
@@ -110,9 +121,11 @@ namespace PokemonReviewApp
                             }
                         }
                     }
+
                 };
-                dataContext.PokemonOwners.AddRange(pokemonOwners);
-                dataContext.SaveChanges();
+
+                _context.PokemonOwners.AddRange(pokemonOwners);
+                _context.SaveChanges();
             }
         }
     }

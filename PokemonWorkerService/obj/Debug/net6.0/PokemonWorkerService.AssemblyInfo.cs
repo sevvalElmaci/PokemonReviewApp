@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PokemonWorkerService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2a00e142a26d753c07ea66a4b077f2878189417")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+45428b3879ac1abffa3f95da803ff36fcc260d39")]
 [assembly: System.Reflection.AssemblyProductAttribute("PokemonWorkerService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PokemonWorkerService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
@@ -161,38 +162,57 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public IActionResult DeletePokemon(int pokeId)
+        public IActionResult SoftDeletePokemon(int pokeId)
         {
-            if (!_pokemonRepository.PokemonExists(pokeId))
-            {
-                return NotFound();
+          
+                var pokemon = _pokemonRepository.GetPokemon(pokeId);
+                if (pokemon == null)
+                    return NotFound();
+
+                _pokemonRepository.SoftDeletePokemon(pokemon);
+                _pokemonRepository.Save();
+
+                return NoContent();
             }
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        [Authorize]
+        [HttpPost("restore/{pokeId}")]
+        public IActionResult RestorePokemon(int pokeId)
+        {
+            var pokemon = _pokemonRepository.GetPokemonIncludingDeleted(pokeId);
+            if (pokemon == null)
+                return NotFound("Pokemon not found");
 
-            var pokemonToDelete = _pokemonRepository.GetPokemon(pokeId);
+            _pokemonRepository.RestorePokemon(pokemon);
+            _pokemonRepository.Save();
 
-            if (!_pokemonRepository.DeletePokemon(pokemonToDelete))
-            {
-                ModelState.AddModelError("", " Something went wrong deleting pokemon");
-                return StatusCode(500, ModelState);
-            }
+            return Ok("Pokemon restored successfully");
+        }
 
-            return NoContent();
+        [Authorize]
+        [HttpGet("deleted")]
+        public IActionResult GetDeletedPokemons()
+        {
+            var deleted = _mapper.Map<List<PokemonDto>>(
+                _pokemonRepository.GetDeletedPokemons());
 
-
+            return Ok(deleted);
         }
 
         [HttpPost("create-with-log")]
-        public IActionResult CreatePokemonWithLog(int ownerId, int categoryId, int foodId, [FromBody] PokemonDto pokemonDto)
+        public IActionResult CreatePokemonWithLog(
+            int ownerId, int categoryId, int foodId,
+            [FromBody] PokemonDto pokemonDto)
         {
             var pokemon = _mapper.Map<Pokemon>(pokemonDto);
-            var result = _pokemonRepository.CreatePokemonWithLog( ownerId,  categoryId,  foodId,  pokemon);
+
+            var result = _pokemonRepository.CreatePokemonWithLog(
+                ownerId, categoryId, foodId, pokemon);
+
             if (result)
-                return Ok("Pokemon & PokeLog created succesfully");
-            else
-                return StatusCode(500, "Transaction failed!");
+                return Ok("Pokemon & PokeLog created successfully");
+
+            return StatusCode(500, "Transaction failed!");
         }
 
     }

@@ -13,7 +13,15 @@ namespace PokemonReviewApp.Interfaces
         bool CategoryExist(int id); 
         bool CreateCategory(Category category);
         bool UpdateCategory(Category category);
-        bool DeleteCategory(Category category);
+
+        //bool DeleteCategory(Category category);
+        void SoftDelete(Category category);
+        Category GetCategoryIncludingDeleted(int id);
+        void RestoreCategory(Category category);
+
+        ICollection<Category> GetDeletedCategories();  
+
+
         bool Save();    
 
     }

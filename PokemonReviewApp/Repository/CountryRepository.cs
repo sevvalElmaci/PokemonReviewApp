@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
@@ -65,10 +66,34 @@ namespace PokemonReviewApp.Repository
 
         }
 
-        public bool DeleteCountry(Country country)
+        public Country GetCountryIncludingDeleted(int id)
         {
-            _context.Remove(country);
-            return Save();
+            return _context.Countries
+            .IgnoreQueryFilters()
+            .FirstOrDefault(c => c.Id == id);
+        }
+
+        public ICollection<Country> GetDeletedCountries()
+        {
+            return _context.Countries
+                .IgnoreQueryFilters()
+            .Where(c => c.IsDeleted)
+            .OrderBy(c => c.Id)
+            .ToList();
+        }
+
+        public void RestoreCountry(Country country)
+        {
+            country.IsDeleted = false;
+            country.DeletedDateTime = null;
+            _context.Countries.Update(country);
+        }
+
+        public void SoftDeleteCountry(Country country)
+        {
+            country.IsDeleted = true;
+            country.DeletedDateTime = DateTime.Now;
+            _context.Countries.Update(country);
         }
     }
 }

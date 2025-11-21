@@ -146,26 +146,36 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
 
-        public IActionResult DeleteOwner(int id)
+        public IActionResult SoftDeleteOwner(int id)
         {
-            if(!_ownerRepository.OwnerExists(id))
-            {
+            var owner = _ownerRepository.GetOwner(id);
+            if (owner == null)
                 return NotFound();
-            }
-            var ownerToDelete = _ownerRepository.GetOwner(id);
-                
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
-            if (!_ownerRepository.DeleteOwner(ownerToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting category");
-                    return StatusCode(500, ModelState); 
+            _ownerRepository.SoftDeleteOwner(owner);
+            _ownerRepository.Save();
 
-            }
             return NoContent();
         }
+        [HttpPost("restore/{id}")]
+        public IActionResult RestoreOwner(int id)
+        {
+            var owner = _ownerRepository.GetOwnerIncludingDeleted(id);
 
+            if (owner == null)
+                return NotFound("Owner not found");
+
+            _ownerRepository.RestoreOwner(owner);
+            _ownerRepository.Save();
+
+            return Ok("Owner restored successfully");
+        }
+        [HttpGet("deleted")]
+        public IActionResult GetDeletedOwners()
+        {
+            var deleted = _mapper.Map<List<OwnerDto>>(_ownerRepository.GetDeletedOwners());
+            return Ok(deleted);
+        }
 
     }
 }

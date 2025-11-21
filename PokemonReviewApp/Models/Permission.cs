@@ -1,6 +1,6 @@
 ﻿namespace PokemonReviewApp.Models
 {
-    public class Permission 
+    public class Permission : AuditEntityBase
     {
         public int Id { get; set; }
         public string PermissionName { get; set; }

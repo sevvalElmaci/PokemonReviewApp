@@ -165,28 +165,39 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
 
-        public IActionResult DeleteFood(int id)
+        public IActionResult SoftDeleteFood(int id)
         {
-            if (!_foodRepository.FoodExists(id))
-            {
+            var food = _foodRepository.GetFood(id);
+            if (food == null)
                 return NotFound();
-            }
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            _foodRepository.SoftDelete(food);
+            _foodRepository.Save();
 
-            var foodToDelete = _foodRepository.GetFood(id);
-            if (!_foodRepository.DeleteFood(foodToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting food");
-                return StatusCode(500, ModelState);
-            }
-            else
-            {
-                return NoContent();
-            }   
-            
+            return NoContent();
         }
+
+        [HttpPost("restore/{id}")]
+        public IActionResult RestoreFood(int id)
+        {
+            var food = _foodRepository.GetFoodIncludingDeleted(id);
+            if (food == null)
+                return NotFound("Food not found");
+
+            _foodRepository.RestoreFood(food);
+            _foodRepository.Save();
+
+            return Ok("Food restored successfully");
+        }
+        [HttpGet("deleted")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FoodDto>))]
+        public IActionResult GetDeletedFoods()
+        {
+            var deletedFoods = _mapper.Map<List<FoodDto>>(_foodRepository.GetDeletedFoods());
+            return Ok(deletedFoods);
+        }
+
+
         [HttpGet("by-pokemon/{pokeId}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<FoodDto>))]
         [ProducesResponseType(404)]

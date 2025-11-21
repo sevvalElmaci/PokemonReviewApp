@@ -1,7 +1,7 @@
-﻿using PokemonReviewApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace PokemonReviewApp.Repository
 {
@@ -17,8 +17,6 @@ namespace PokemonReviewApp.Repository
         public ICollection<Permission> GetPermissions()
         {
             return _context.Permissions
-                .Include(p => p.RolePermissions)
-                .ThenInclude(rp => rp.Role)
                 .OrderBy(p => p.Id)
                 .ToList();
         }
@@ -26,14 +24,23 @@ namespace PokemonReviewApp.Repository
         public Permission GetPermissionById(int id)
         {
             return _context.Permissions
-                .Include(p => p.RolePermissions)
-                .ThenInclude(rp => rp.Role)
                 .FirstOrDefault(p => p.Id == id);
+        }
+
+        public Permission GetPermissionByName(string name)
+        {
+            return _context.Permissions
+                .FirstOrDefault(p => p.PermissionName == name);
         }
 
         public bool PermissionExists(int id)
         {
             return _context.Permissions.Any(p => p.Id == id);
+        }
+
+        public bool PermissionExists(string name)
+        {
+            return _context.Permissions.Any(p => p.PermissionName == name);
         }
 
         public bool CreatePermission(Permission permission)
@@ -48,9 +55,13 @@ namespace PokemonReviewApp.Repository
             return Save();
         }
 
-        public bool DeletePermission(Permission permission)
+        public bool SoftDeletePermission(Permission permission)
         {
-            _context.Remove(permission);
+            permission.IsDeleted = true;
+            permission.DeletedDateTime = DateTime.Now;
+            permission.DeletedUserId = 1; // current user id eklenecek
+            _context.Permissions.Update(permission);
+
             return Save();
         }
 
@@ -58,5 +69,29 @@ namespace PokemonReviewApp.Repository
         {
             return _context.SaveChanges() > 0;
         }
+
+        public bool RestorePermission(Permission permission)
+        {
+            permission.IsDeleted = false;
+            permission.DeletedDateTime = null;
+            permission.DeletedUserId = null;
+            return Save();
+        }
+
+        public ICollection<Permission> GetDeletedPermissions()
+        {
+            return _context.Permissions
+                .IgnoreQueryFilters()
+                   .Where(p => p.IsDeleted)
+                   .OrderBy(p => p.Id)
+                   .ToList();
+        }
+        public Permission GetPermissionIncludingDeleted(int id)
+        {
+            return _context.Permissions
+                .IgnoreQueryFilters()
+                .FirstOrDefault(p => p.Id == id);
+        }
+
     }
 }

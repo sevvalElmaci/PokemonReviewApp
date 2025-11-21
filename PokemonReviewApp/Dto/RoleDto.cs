@@ -1,4 +1,4 @@
-﻿namespace PokemonReviewApp.Dto
+﻿ namespace PokemonReviewApp.Dto
 {
     public class RoleDto
     {

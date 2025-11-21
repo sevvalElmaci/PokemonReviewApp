@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PokemonReviewApp.Migrations
 {
-    public partial class InitialCleanBuild : Migration
+    public partial class InitialClean : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -202,7 +202,6 @@ namespace PokemonReviewApp.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedUserId = table.Column<int>(type: "int", nullable: true),
                     CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedUserId = table.Column<int>(type: "int", nullable: true),
@@ -406,9 +405,9 @@ namespace PokemonReviewApp.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RoleId = table.Column<int>(type: "int", nullable: false),
+                    RoleId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedUserId = table.Column<int>(type: "int", nullable: true),
                     CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedUserId = table.Column<int>(type: "int", nullable: true),
@@ -425,7 +424,12 @@ namespace PokemonReviewApp.Migrations
                         column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_RoleId1",
+                        column: x => x.RoleId1,
+                        principalTable: "Roles",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -464,10 +468,38 @@ namespace PokemonReviewApp.Migrations
                 columns: new[] { "Id", "CreatedDateTime", "CreatedUserId", "DeletedDateTime", "DeletedUserId", "Description", "IsDeleted", "PermissionName", "UpdatedDateTime", "UpdatedUserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 11, 13, 8, 1, 28, 369, DateTimeKind.Utc).AddTicks(4336), null, null, null, null, false, "ListPokemon", null, null },
-                    { 2, new DateTime(2025, 11, 13, 8, 1, 28, 369, DateTimeKind.Utc).AddTicks(4336), null, null, null, null, false, "AddPokemon", null, null },
-                    { 3, new DateTime(2025, 11, 13, 8, 1, 28, 369, DateTimeKind.Utc).AddTicks(4337), null, null, null, null, false, "UpdatePokemon", null, null },
-                    { 4, new DateTime(2025, 11, 13, 8, 1, 28, 369, DateTimeKind.Utc).AddTicks(4337), null, null, null, null, false, "DeletePokemon", null, null }
+                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "ListCategory", null, null },
+                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "AddCategory", null, null },
+                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "UpdateCategory", null, null },
+                    { 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "DeleteCategory", null, null },
+                    { 5, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "ListCountry", null, null },
+                    { 6, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "AddCountry", null, null },
+                    { 7, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "UpdateCountry", null, null },
+                    { 8, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "DeleteCountry", null, null },
+                    { 9, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "ListFood", null, null },
+                    { 10, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "AddFood", null, null },
+                    { 11, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "UpdateFood", null, null },
+                    { 12, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "DeleteFood", null, null },
+                    { 13, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "ListOwner", null, null },
+                    { 14, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "AddOwner", null, null },
+                    { 15, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "UpdateOwner", null, null },
+                    { 16, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "DeleteOwner", null, null },
+                    { 17, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "ListPokemon", null, null },
+                    { 18, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "AddPokemon", null, null },
+                    { 19, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "UpdatePokemon", null, null },
+                    { 20, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "DeletePokemon", null, null },
+                    { 21, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "ListProperty", null, null },
+                    { 22, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "AddProperty", null, null },
+                    { 23, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "UpdateProperty", null, null },
+                    { 24, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "DeleteProperty", null, null },
+                    { 25, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "ListReview", null, null },
+                    { 26, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "AddReview", null, null },
+                    { 27, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "UpdateReview", null, null },
+                    { 28, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "DeleteReview", null, null },
+                    { 29, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "ListReviewer", null, null },
+                    { 30, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "AddReviewer", null, null },
+                    { 31, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "UpdateReviewer", null, null },
+                    { 32, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, null, false, "DeleteReviewer", null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -475,9 +507,9 @@ namespace PokemonReviewApp.Migrations
                 columns: new[] { "Id", "CreatedDateTime", "CreatedUserId", "DeletedDateTime", "DeletedUserId", "IsDeleted", "RoleName", "UpdatedDateTime", "UpdatedUserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 11, 13, 8, 1, 28, 369, DateTimeKind.Utc).AddTicks(4208), null, null, null, false, "Admin", null, null },
-                    { 2, new DateTime(2025, 11, 13, 8, 1, 28, 369, DateTimeKind.Utc).AddTicks(4209), null, null, null, false, "Manager", null, null },
-                    { 3, new DateTime(2025, 11, 13, 8, 1, 28, 369, DateTimeKind.Utc).AddTicks(4210), null, null, null, false, "User", null, null }
+                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, false, "Admin", null, null },
+                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, false, "Manager", null, null },
+                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, null, false, "User", null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -489,9 +521,74 @@ namespace PokemonReviewApp.Migrations
                     { 2, 1 },
                     { 3, 1 },
                     { 4, 1 },
+                    { 5, 1 },
+                    { 6, 1 },
+                    { 7, 1 },
+                    { 8, 1 },
+                    { 9, 1 },
+                    { 10, 1 },
+                    { 11, 1 },
+                    { 12, 1 },
+                    { 13, 1 },
+                    { 14, 1 },
+                    { 15, 1 },
+                    { 16, 1 },
+                    { 17, 1 },
+                    { 18, 1 },
+                    { 19, 1 },
+                    { 20, 1 },
+                    { 21, 1 },
+                    { 22, 1 },
+                    { 23, 1 },
+                    { 24, 1 },
+                    { 25, 1 },
+                    { 26, 1 },
+                    { 27, 1 },
+                    { 28, 1 },
+                    { 29, 1 },
+                    { 30, 1 },
+                    { 31, 1 },
+                    { 32, 1 },
                     { 1, 2 },
                     { 2, 2 },
-                    { 1, 3 }
+                    { 3, 2 },
+                    { 5, 2 },
+                    { 6, 2 },
+                    { 7, 2 },
+                    { 9, 2 },
+                    { 10, 2 },
+                    { 11, 2 },
+                    { 13, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "RolePermissions",
+                columns: new[] { "PermissionId", "RoleId" },
+                values: new object[,]
+                {
+                    { 14, 2 },
+                    { 15, 2 },
+                    { 17, 2 },
+                    { 18, 2 },
+                    { 19, 2 },
+                    { 21, 2 },
+                    { 22, 2 },
+                    { 23, 2 },
+                    { 25, 2 },
+                    { 26, 2 },
+                    { 27, 2 },
+                    { 29, 2 },
+                    { 30, 2 },
+                    { 31, 2 },
+                    { 1, 3 },
+                    { 5, 3 },
+                    { 9, 3 },
+                    { 13, 3 },
+                    { 17, 3 },
+                    { 21, 3 },
+                    { 25, 3 },
+                    { 26, 3 },
+                    { 29, 3 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -538,6 +635,11 @@ namespace PokemonReviewApp.Migrations
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_RoleId1",
+                table: "Users",
+                column: "RoleId1");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

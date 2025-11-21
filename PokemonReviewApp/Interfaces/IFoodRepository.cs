@@ -12,7 +12,9 @@ namespace PokemonReviewApp.Interfaces
         bool FoodExists(int id);
         bool CreateFood(Food food);
         bool UpdateFood(Food food);
-        bool DeleteFood(Food food);
-        bool Save();
+        void SoftDelete(Food food);
+        Food GetFoodIncludingDeleted(int id);
+        void RestoreFood(Food food);
+        ICollection<Food> GetDeletedFoods(); bool Save();
     }
 }

@@ -1,4 +1,5 @@
-﻿using PokemonReviewApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 
@@ -61,6 +62,36 @@ namespace PokemonReviewApp.Repository
             return _context.PokeFoods
                             .Where(pf => pf.PokemonId == pokeId)
                             .Select(f => f.Food).ToList();
+        }
+
+        public void SoftDelete(Food food)
+        {
+            food.IsDeleted = true;
+            food.DeletedDateTime = DateTime.Now;
+            _context.Foods.Update(food);
+        }
+
+        public Food GetFoodIncludingDeleted(int id)
+        {
+            return _context.Foods
+                            .IgnoreQueryFilters()
+                            .FirstOrDefault(f => f.Id == id);
+        }
+
+        public void RestoreFood(Food food)
+        {
+            food.IsDeleted = false;
+            food.DeletedDateTime = null;
+            _context.Foods.Update(food);
+        }
+
+        public ICollection<Food> GetDeletedFoods()
+        {
+            return _context.Foods
+                            .IgnoreQueryFilters()
+                            .Where(f => f.IsDeleted)
+                            .OrderBy(f => f.Id)
+                            .ToList();
         }
     }
 }

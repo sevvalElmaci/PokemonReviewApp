@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
@@ -67,6 +68,37 @@ namespace PokemonReviewApp.Repository
         {
             _context.Remove(owner);
             return Save();
+        }
+
+        public void SoftDeleteOwner(Owner owner)
+        {
+            owner.IsDeleted = true;
+            owner.DeletedDateTime = DateTime.Now;
+            _context.Owners.Update(owner);
+        }
+
+        public Owner GetOwnerIncludingDeleted(int id)
+        {
+            return _context.Owners
+                            .IgnoreQueryFilters()
+                            .Include(o => o.Country)
+                            .FirstOrDefault(o => o.Id == id);
+        }
+
+        public void RestoreOwner(Owner owner)
+        {
+            owner.IsDeleted = false;
+            owner.DeletedDateTime = null;
+            _context.Owners.Update(owner);
+        }
+
+        public ICollection<Owner> GetDeletedOwners()
+        {
+            return _context.Owners
+                .IgnoreQueryFilters()
+                .Where(o => o.IsDeleted)
+                .OrderBy(o => o.Id)
+                .ToList();
         }
     }
 }

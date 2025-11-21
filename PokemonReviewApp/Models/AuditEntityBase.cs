@@ -3,7 +3,7 @@
     public abstract class AuditEntityBase
     {
         public int? CreatedUserId { get; set; }           // JWT gelince otomatik dolacak
-        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedDateTime { get; set; } 
 
         public int? UpdatedUserId { get; set; }
         public DateTime? UpdatedDateTime { get; set; }

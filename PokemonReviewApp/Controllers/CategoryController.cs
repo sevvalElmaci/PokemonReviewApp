@@ -5,6 +5,7 @@ using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using PokemonReviewApp.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace PokemonReviewApp.Controllers
@@ -152,35 +153,73 @@ namespace PokemonReviewApp.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{categoryId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
+        //[HttpDelete("{categoryId}")]
+        //[ProducesResponseType(400)]
+        //[ProducesResponseType(204)]
+        //[ProducesResponseType(404)]
 
-        public IActionResult DeleteCategory(int categoryId)
+        //public IActionResult DeleteCategory(int categoryId)
+        //{
+        //    if (!_categoryRepository.CategoryExist(categoryId))
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if(!ModelState.IsValid)
+        //        return BadRequest(ModelState);
+
+        //    var categoryToDelete = _categoryRepository.GetCategory(categoryId);
+
+        //    if (!_categoryRepository.DeleteCategory(categoryToDelete))
+        //    {
+
+        //        ModelState.AddModelError("", "Something went wrong deleting category");
+
+        //                       return StatusCode(500, ModelState);
+        //    }
+
+        //    return NoContent();
+        //}
+        [HttpDelete("{id}")]
+        public IActionResult SoftDeleteCategory(int id)
         {
-            if (!_categoryRepository.CategoryExist(categoryId))
-            {
-                return NotFound();
-            }
+            var category = _categoryRepository.GetCategory(id);
 
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (category == null)
+                return NotFound("Category not found");
 
-            var categoryToDelete = _categoryRepository.GetCategory(categoryId);
-
-            if (!_categoryRepository.DeleteCategory(categoryToDelete))
-            {
-
-                ModelState.AddModelError("", "Something went wrong deleting category");
-
-                               return StatusCode(500, ModelState);
-            }
+            _categoryRepository.SoftDelete(category);
+            _categoryRepository.Save();
 
             return NoContent();
         }
 
-        
+        [Authorize]
+        [HttpPost("restore/{id}")]
+        public IActionResult RestoreCategory(int id)
+        {
+            var category = _categoryRepository.GetCategoryIncludingDeleted(id);
+
+            if (category == null)
+                return NotFound("Category not found");
+
+            _categoryRepository.RestoreCategory(category);
+            _categoryRepository.Save();
+
+            return Ok("Category restored successfully");
+        }
+        [Authorize]
+        [HttpGet("deleted")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CategoryDto>))]
+        public IActionResult GetDeletedCategories()
+        {
+            var deletedCategories = _mapper
+                .Map<List<CategoryDto>>(_categoryRepository.GetDeletedCategories());
+
+            return Ok(deletedCategories);
+        }
+
+
 
     }
 }

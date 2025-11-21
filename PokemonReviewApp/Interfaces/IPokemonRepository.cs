@@ -11,13 +11,21 @@ namespace PokemonReviewApp.Interfaces
 
         Pokemon GetPokemon(int id);
         Pokemon GetPokemon(string name);
-        decimal GetPokemonRating(int pokeId);
         bool PokemonExists(int pokeId);
         bool CreatePokemon(int ownerId, int categoryId, int foodId, Pokemon pokemon);
+        bool UpdatePokemon(Pokemon pokemon);
+
+        decimal GetPokemonRating(int pokeId);
+
+        void SoftDeletePokemon(Pokemon pokemon);
+        Pokemon GetPokemonIncludingDeleted(int id);
+        void RestorePokemon(Pokemon pokemon);
+        ICollection<Pokemon> GetDeletedPokemons();
+
+
         bool CreatePokemonWithLog(int ownerId, int categoryId, int foodId, Pokemon pokemon);
 
-        bool UpdatePokemon(Pokemon pokemon);
-        bool DeletePokemon(Pokemon pokemon);
+      
         bool Save();
 
     }

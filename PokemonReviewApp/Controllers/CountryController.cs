@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Helpers;
@@ -30,8 +31,29 @@ namespace PokemonReviewApp.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             return Ok(countries);
-
         }
+        [Authorize]
+        [HttpGet("deleted")]
+        [ProducesResponseType(200)]
+        public IActionResult GetDeletedCountries()
+        {
+            var deletedCountries = _mapper.Map<List<CountryDto>>(_countryRepository.GetDeletedCountries());
+            return Ok(deletedCountries);
+        }
+
+        //[HttpPost("restore/{id}")]
+        //public IActionResult RestoreCountry(int id)
+        //{
+        //    var country = _countryRepository.GetCountryIncludingDeleted(id);
+        //    if (country == null)
+        //        return NotFound();
+
+        //    _countryRepository.RestoreCountry(country);
+        //    _countryRepository.Save();
+
+        //    return Ok("Country restored successfully");
+        //}
+
         [HttpGet("{countryId}")]
         [ProducesResponseType(200, Type = typeof(Country))]
         [ProducesResponseType(400)]
@@ -48,19 +70,32 @@ namespace PokemonReviewApp.Controllers
             return Ok(country);
 
         }
-        [HttpGet("owner/{ownerId}")]
-        [ProducesResponseType(200, Type = typeof(Country))]
-        [ProducesResponseType(400)]
-        public IActionResult GetCountryOfAnOwner(int ownerId)
+        //[HttpGet("owner/{ownerId}")]
+        //[ProducesResponseType(200, Type = typeof(Country))]
+        //[ProducesResponseType(400)]
+        //public IActionResult GetCountryOfAnOwner(int ownerId)
+        //{
+        //    var country = _mapper.Map<CountryDto>(
+        //        _countryRepository.GetCountryByOwner(ownerId));
+
+        //    if (!ModelState.IsValid)
+        //        return BadRequest();
+
+        //    return Ok(country);
+
+        //}
+        [Authorize]
+        [HttpPost("restore/{id}")]
+        public IActionResult RestoreCountry(int id)
         {
-            var country = _mapper.Map<CountryDto>(
-                _countryRepository.GetCountryByOwner(ownerId));
+            var country = _countryRepository.GetCountryIncludingDeleted(id);
+            if (country == null)
+                return NotFound();
 
-            if (!ModelState.IsValid)
-                return BadRequest();
+            _countryRepository.RestoreCountry(country);
+            _countryRepository.Save();
 
-            return Ok(country);
-
+            return Ok("Country restored successfully");
         }
 
         [HttpPost]
@@ -157,35 +192,26 @@ namespace PokemonReviewApp.Controllers
         }
 
 
-        [HttpDelete("{countryId}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(400)]
+    
 
-        public IActionResult DeleteCountry(int countryId)
+        [HttpDelete]
+        public IActionResult SoftDeleteCountry(int id)
         {
-            if (!_countryRepository.CountryExists(countryId))
-            {
+            var country = _countryRepository.GetCountry(id);
+            if (country == null)
                 return NotFound();
-            }
 
-            var countryToDelete = _countryRepository.GetCountry(countryId);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (!_countryRepository.DeleteCountry(countryToDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong deleting category");
-                return StatusCode(500, ModelState);
-            }
+            _countryRepository.SoftDeleteCountry(country);
+            _countryRepository.Save();
 
             return NoContent();
         }
 
+
     }
-
-
 }
+
+
+
 
 

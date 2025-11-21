@@ -2,22 +2,19 @@
 using PokemonReviewApp.Models;
 using System.Linq.Expressions;
 using System.Security.Claims;
-using static System.Net.WebRequestMethods;
+
 namespace PokemonReviewApp.Data
 {
-
-    //DATA LAYER, thanks to Datacontext we can access database and explanation of tables
-    //This folder is brain of the project
-    //its a bridge with models and SQL Server
-
-    public class DataContext : DbContext //inherit from Dbcontext
+    public class DataContext : DbContext
     {
         private readonly IHttpContextAccessor _http;
 
-        public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor http) : base(options)
+        public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor http)
+            : base(options)
         {
             _http = http;
         }
+
         public DbSet<Category> Categories { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<Owner> Owners { get; set; }
@@ -37,94 +34,115 @@ namespace PokemonReviewApp.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
 
-
-
-
-
-
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //let me tell you a story about RELATIONSHIPSS of ENTITY
-        // OnModelCreating : special code of DBCONTEXT. it says that, when we create database we define some rules manually.
-        //relationship exist with this part. it explains relationships to ENTITY FRAMEWORK
-
-
         {
-            base.OnModelCreating(modelBuilder);
+            // ----------------------------
+            // GLOBAL QUERY FILTER (ONLY ONCE!)
+            // ----------------------------
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(AuditEntityBase).IsAssignableFrom(entityType.ClrType))
+                {
+                    var parameter = Expression.Parameter(entityType.ClrType, "x");
+                    var prop = Expression.Property(parameter, nameof(AuditEntityBase.IsDeleted));
+                    var compare = Expression.Equal(prop, Expression.Constant(false));
+                    var lambda = Expression.Lambda(compare, parameter);
 
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+                }
+            }
+
+            // Seeder
             DbSeeder.Seed(modelBuilder);
 
-            modelBuilder.Entity<PokemonCategory>() //Creating join table for pokemon and category.
-                .HasKey(pc => new { pc.PokemonId, pc.CategoryId }); //COMPOSITE KEY -> define unique register with pokemonID and CategoryID
-            //Thanks to HasKEY you cant add a same pokemon-category duo.
+            // ----------------------------
+            // PokemonCategory
+            // ----------------------------
             modelBuilder.Entity<PokemonCategory>()
-                .HasOne(p => p.Pokemon) // p refers to every pokemon in PokemonCategory table. 
+                .HasKey(pc => new { pc.PokemonId, pc.CategoryId });
+
+            modelBuilder.Entity<PokemonCategory>()
+                .HasOne(p => p.Pokemon)
                 .WithMany(pc => pc.PokemonCategories)
                 .HasForeignKey(p => p.PokemonId);
+
             modelBuilder.Entity<PokemonCategory>()
-              .HasOne(p => p.Category)
-              .WithMany(pc => pc.PokemonCategories)
-              .HasForeignKey(c => c.CategoryId);
+                .HasOne(p => p.Category)
+                .WithMany(pc => pc.PokemonCategories)
+                .HasForeignKey(c => c.CategoryId);
+
+            // ----------------------------
+            // PokemonOwner
+            // ----------------------------
             modelBuilder.Entity<PokemonOwner>()
-               .HasKey(po => new { po.PokemonId, po.OwnerId });
+                .HasKey(po => new { po.PokemonId, po.OwnerId });
+
             modelBuilder.Entity<PokemonOwner>()
                 .HasOne(p => p.Pokemon)
-                .WithMany(pc => pc.PokemonOwners)
+                .WithMany(po => po.PokemonOwners)
                 .HasForeignKey(p => p.PokemonId);
-            modelBuilder.Entity<PokemonOwner>()
-              .HasOne(p => p.Owner)
-              .WithMany(pc => pc.PokemonOwners)
-              .HasForeignKey(c => c.OwnerId);
 
-            //HasOne kullanırken aslında diyorum ki,
-            //p için spesifik bir pokemon olsun bu pokemonun özellikleri şöyledir: withmany.. hasforeignkey...
+            modelBuilder.Entity<PokemonOwner>()
+                .HasOne(p => p.Owner)
+                .WithMany(po => po.PokemonOwners)
+                .HasForeignKey(c => c.OwnerId);
+
+            // ----------------------------
+            // PokeFood
+            // ----------------------------
             modelBuilder.Entity<PokeFood>()
-               .HasKey(pf => new { pf.PokemonId, pf.FoodId });
+                .HasKey(pf => new { pf.PokemonId, pf.FoodId });
+
             modelBuilder.Entity<PokeFood>()
                 .HasOne(p => p.Pokemon)
                 .WithMany(pf => pf.PokeFoods)
                 .HasForeignKey(p => p.PokemonId);
+
             modelBuilder.Entity<PokeFood>()
                 .HasOne(f => f.Food)
                 .WithMany(pf => pf.PokeFoods)
                 .HasForeignKey(f => f.FoodId);
 
+            // ----------------------------
+            // PokeProperty
+            // ----------------------------
             modelBuilder.Entity<PokeProperty>()
                 .HasKey(pp => new { pp.PokemonId, pp.PropertyId });
+
             modelBuilder.Entity<PokeProperty>()
                 .HasOne(p => p.Pokemon)
                 .WithMany(pp => pp.PokeProperties)
                 .HasForeignKey(p => p.PokemonId);
+
             modelBuilder.Entity<PokeProperty>()
                 .HasOne(pr => pr.Property)
                 .WithMany(pp => pp.PokeProperties)
                 .HasForeignKey(pr => pr.PropertyId);
 
-            // RolePermission (Many-to-Many)
+            // ----------------------------
+            // User → Role (1 - N)
+            // ----------------------------
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Role)
+                .WithMany(r => r.Users)
+                .HasForeignKey(u => u.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ----------------------------
+            // RolePermission (N - N)
+            // ----------------------------
             modelBuilder.Entity<RolePermission>()
                 .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+
             modelBuilder.Entity<RolePermission>()
                 .HasOne(rp => rp.Role)
                 .WithMany(r => r.RolePermissions)
                 .HasForeignKey(rp => rp.RoleId);
+
             modelBuilder.Entity<RolePermission>()
                 .HasOne(rp => rp.Permission)
                 .WithMany(p => p.RolePermissions)
                 .HasForeignKey(rp => rp.PermissionId);
-
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                if (typeof(AuditEntityBase).IsAssignableFrom(entityType.ClrType))
-                {
-                    var parameter = Expression.Parameter(entityType.ClrType, "e");
-                    var prop = Expression.Property(parameter, nameof(AuditEntityBase.IsDeleted));
-                    var body = Expression.Equal(prop, Expression.Constant(false));
-                    var lambda = Expression.Lambda(body, parameter);
-                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
-                }
-            }
-
         }
 
         public override int SaveChanges()
@@ -169,7 +187,6 @@ namespace PokemonReviewApp.Data
                 }
                 else if (entry.State == EntityState.Deleted)
                 {
-                    // Soft delete’e çevir
                     entry.State = EntityState.Modified;
                     entity.IsDeleted = true;
                     entity.DeletedDateTime = now;
@@ -178,7 +195,4 @@ namespace PokemonReviewApp.Data
             }
         }
     }
-
 }
-
-
