@@ -13,9 +13,9 @@ namespace PokemonReviewApp.Interfaces
         bool RoleExists(int id);
         bool RoleExists(string name);
 
-        bool CreateRole(Role role);
-        bool UpdateRole(Role role);
-        bool SoftDeleteRole(Role role);
+        bool CreateRole(Role role, int userId);
+        bool UpdateRole(Role role, int userId);
+        bool SoftDeleteRole(Role role, int userId);
         bool RestoreRole(Role role);
 
         ICollection<Permission> GetPermissionsByRoleId(int roleId);

@@ -14,12 +14,18 @@ namespace PokemonReviewApp
         {
             if (!_context.Users.Any())
             {
-                _context.Users.Add(new User
+                var admin = new User
                 {
                     UserName = "admin",
-                    Password = "adminadmin"
-                });
-
+                    Password = "adminadmin",
+                    RoleId = 1,           // Admin
+                    CreatedUserId = null, // system
+                    CreatedDateTime = DateTime.Now,
+                    UpdatedUserId = null,
+                    UpdatedDateTime = null,
+                    IsDeleted = false
+                };
+                _context.Users.Add(admin);
                 _context.SaveChanges();
             }
 

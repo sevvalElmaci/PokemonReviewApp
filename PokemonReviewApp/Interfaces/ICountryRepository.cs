@@ -9,13 +9,15 @@ namespace PokemonReviewApp.Interfaces
         Country GetCountry(int id);
         Country GetCountryByOwner(int ownerId);
         bool CountryExists(int id);
-        bool CreateCountry(Country country);
-        bool UpdateCountry(Country country);
-        void SoftDeleteCountry(Country country);
+        bool CreateCountry(Country country, int userId);
+        bool UpdateCountry(Country country, int userId);
+        bool SoftDeleteCountry(int countryId, int userId);
 
         Country GetCountryIncludingDeleted(int id);
         void RestoreCountry(Country country);
         ICollection<Country> GetDeletedCountries();
+        ICollection<Country> GetCountriesIncludingDeleted();
+
         bool Save();
 
     }

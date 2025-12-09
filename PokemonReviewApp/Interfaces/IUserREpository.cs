@@ -13,13 +13,16 @@ namespace PokemonReviewApp.Interfaces
         User GetUserById(int id);
         bool UserExists(int id);
         User CreateUserWithLog(User user); //transactional. it effects both two table. userlog and users
-        bool CreateUser(User user); // it just add data not logging.
-        bool UpdateUser(User user);
-        bool SoftDeleteUser(User user);
+        bool CreateUser(User user, int userId); // it just add data not logging.
+        bool UpdateUser(User user, int userId);
+        bool SoftDeleteUser(User user, int userId);
         bool RestoreUser(User user);
+
         bool Save();
         User GetUserWithRole(int id);
         ICollection<Permission> GetUserPermissions(int userId);
+        User GetUserWithRole(string username);
+
         ICollection<User> GetDeletedUsers();
 
 

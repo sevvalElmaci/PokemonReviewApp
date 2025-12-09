@@ -12,8 +12,8 @@ using PokemonReviewApp.Data;
 namespace PokemonReviewApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251119060537_InitialClean")]
-    partial class InitialClean
+    [Migration("20251208114122_InitialAuth2")]
+    partial class InitialAuth2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -235,224 +235,588 @@ namespace PokemonReviewApp.Migrations
                             Id = 1,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "ListCategory"
+                            PermissionName = "Category.List"
                         },
                         new
                         {
                             Id = 2,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "AddCategory"
+                            PermissionName = "Category.Add"
                         },
                         new
                         {
                             Id = 3,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "UpdateCategory"
+                            PermissionName = "Category.Update"
                         },
                         new
                         {
                             Id = 4,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "DeleteCategory"
+                            PermissionName = "Category.Delete"
                         },
                         new
                         {
                             Id = 5,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "ListCountry"
+                            PermissionName = "Category.Restore"
                         },
                         new
                         {
                             Id = 6,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "AddCountry"
+                            PermissionName = "Category.ListDeleted"
                         },
                         new
                         {
                             Id = 7,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "UpdateCountry"
+                            PermissionName = "Country.List"
                         },
                         new
                         {
                             Id = 8,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "DeleteCountry"
+                            PermissionName = "Country.Add"
                         },
                         new
                         {
                             Id = 9,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "ListFood"
+                            PermissionName = "Country.Update"
                         },
                         new
                         {
                             Id = 10,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "AddFood"
+                            PermissionName = "Country.Delete"
                         },
                         new
                         {
                             Id = 11,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "UpdateFood"
+                            PermissionName = "Country.Restore"
                         },
                         new
                         {
                             Id = 12,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "DeleteFood"
+                            PermissionName = "Country.ListDeleted"
                         },
                         new
                         {
                             Id = 13,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "ListOwner"
+                            PermissionName = "Food.List"
                         },
                         new
                         {
                             Id = 14,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "AddOwner"
+                            PermissionName = "Food.Add"
                         },
                         new
                         {
                             Id = 15,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "UpdateOwner"
+                            PermissionName = "Food.Update"
                         },
                         new
                         {
                             Id = 16,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "DeleteOwner"
+                            PermissionName = "Food.Delete"
                         },
                         new
                         {
                             Id = 17,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "ListPokemon"
+                            PermissionName = "Food.Restore"
                         },
                         new
                         {
                             Id = 18,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "AddPokemon"
+                            PermissionName = "Food.ListDeleted"
                         },
                         new
                         {
                             Id = 19,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "UpdatePokemon"
+                            PermissionName = "Owner.List"
                         },
                         new
                         {
                             Id = 20,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "DeletePokemon"
+                            PermissionName = "Owner.Add"
                         },
                         new
                         {
                             Id = 21,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "ListProperty"
+                            PermissionName = "Owner.Update"
                         },
                         new
                         {
                             Id = 22,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "AddProperty"
+                            PermissionName = "Owner.Delete"
                         },
                         new
                         {
                             Id = 23,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "UpdateProperty"
+                            PermissionName = "Owner.Restore"
                         },
                         new
                         {
                             Id = 24,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "DeleteProperty"
+                            PermissionName = "Owner.ListDeleted"
                         },
                         new
                         {
                             Id = 25,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "ListReview"
+                            PermissionName = "Pokemon.List"
                         },
                         new
                         {
                             Id = 26,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "AddReview"
+                            PermissionName = "Pokemon.Add"
                         },
                         new
                         {
                             Id = 27,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "UpdateReview"
+                            PermissionName = "Pokemon.Update"
                         },
                         new
                         {
                             Id = 28,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "DeleteReview"
+                            PermissionName = "Pokemon.Delete"
                         },
                         new
                         {
                             Id = 29,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "ListReviewer"
+                            PermissionName = "Pokemon.Restore"
                         },
                         new
                         {
                             Id = 30,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "AddReviewer"
+                            PermissionName = "Pokemon.ListDeleted"
                         },
                         new
                         {
                             Id = 31,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "UpdateReviewer"
+                            PermissionName = "Property.List"
                         },
                         new
                         {
                             Id = 32,
                             CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            PermissionName = "DeleteReviewer"
+                            PermissionName = "Property.Add"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Property.Update"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Property.Delete"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Property.Restore"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Property.ListDeleted"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Review.List"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Review.Add"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Review.Update"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Review.Delete"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Review.Restore"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Review.ListDeleted"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Reviewer.List"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Reviewer.Add"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Reviewer.Update"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Reviewer.Delete"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Reviewer.Restore"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Reviewer.ListDeleted"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "User.List"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "User.Add"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "User.Update"
+                        },
+                        new
+                        {
+                            Id = 52,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "User.Delete"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "User.Restore"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "User.ListDeleted"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "UserLog.List"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "UserLog.Add"
+                        },
+                        new
+                        {
+                            Id = 57,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "UserLog.Update"
+                        },
+                        new
+                        {
+                            Id = 58,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "UserLog.Delete"
+                        },
+                        new
+                        {
+                            Id = 59,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "UserLog.Restore"
+                        },
+                        new
+                        {
+                            Id = 60,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "UserLog.ListDeleted"
+                        },
+                        new
+                        {
+                            Id = 61,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "PokemonLog.List"
+                        },
+                        new
+                        {
+                            Id = 62,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "PokemonLog.Add"
+                        },
+                        new
+                        {
+                            Id = 63,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "PokemonLog.Update"
+                        },
+                        new
+                        {
+                            Id = 64,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "PokemonLog.Delete"
+                        },
+                        new
+                        {
+                            Id = 65,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "PokemonLog.Restore"
+                        },
+                        new
+                        {
+                            Id = 66,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "PokemonLog.ListDeleted"
+                        },
+                        new
+                        {
+                            Id = 67,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Permission.List"
+                        },
+                        new
+                        {
+                            Id = 68,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Permission.Add"
+                        },
+                        new
+                        {
+                            Id = 69,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Permission.Update"
+                        },
+                        new
+                        {
+                            Id = 70,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Permission.Delete"
+                        },
+                        new
+                        {
+                            Id = 71,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Permission.Restore"
+                        },
+                        new
+                        {
+                            Id = 72,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Permission.ListDeleted"
+                        },
+                        new
+                        {
+                            Id = 73,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "RolePermission.List"
+                        },
+                        new
+                        {
+                            Id = 74,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "RolePermission.Add"
+                        },
+                        new
+                        {
+                            Id = 75,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "RolePermission.Update"
+                        },
+                        new
+                        {
+                            Id = 76,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "RolePermission.Delete"
+                        },
+                        new
+                        {
+                            Id = 77,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "RolePermission.Restore"
+                        },
+                        new
+                        {
+                            Id = 78,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "RolePermission.ListDeleted"
+                        },
+                        new
+                        {
+                            Id = 79,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Role.List"
+                        },
+                        new
+                        {
+                            Id = 80,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Role.Add"
+                        },
+                        new
+                        {
+                            Id = 81,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Role.Update"
+                        },
+                        new
+                        {
+                            Id = 82,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Role.Delete"
+                        },
+                        new
+                        {
+                            Id = 83,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Role.Restore"
+                        },
+                        new
+                        {
+                            Id = 84,
+                            CreatedDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            PermissionName = "Role.ListDeleted"
                         });
                 });
 
@@ -467,7 +831,7 @@ namespace PokemonReviewApp.Migrations
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CreatedUserId")
+                    b.Property<int>("CreatedUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedDateTime")
@@ -580,7 +944,13 @@ namespace PokemonReviewApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("CreatedDateTime")
+                    b.Property<string>("ActionType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChangedField")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("CreatedUserId")
@@ -592,14 +962,16 @@ namespace PokemonReviewApp.Migrations
                     b.Property<int?>("DeletedUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OwnerId")
+                    b.Property<string>("NewValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OwnerId")
                         .HasColumnType("int");
 
                     b.Property<int>("PokemonId")
@@ -1061,6 +1433,266 @@ namespace PokemonReviewApp.Migrations
                         },
                         new
                         {
+                            RoleId = 1,
+                            PermissionId = 33
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 34
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 35
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 36
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 37
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 38
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 39
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 40
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 41
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 42
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 43
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 44
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 45
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 46
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 47
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 48
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 49
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 50
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 51
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 52
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 53
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 54
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 55
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 56
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 57
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 58
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 59
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 60
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 61
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 62
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 63
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 64
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 65
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 66
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 67
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 68
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 69
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 70
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 71
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 72
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 73
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 74
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 75
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 76
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 77
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 78
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 79
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 80
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 81
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 82
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 83
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 84
+                        },
+                        new
+                        {
                             RoleId = 2,
                             PermissionId = 1
                         },
@@ -1077,17 +1709,17 @@ namespace PokemonReviewApp.Migrations
                         new
                         {
                             RoleId = 2,
-                            PermissionId = 5
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 6
+                            PermissionId = 4
                         },
                         new
                         {
                             RoleId = 2,
                             PermissionId = 7
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 8
                         },
                         new
                         {
@@ -1098,11 +1730,6 @@ namespace PokemonReviewApp.Migrations
                         {
                             RoleId = 2,
                             PermissionId = 10
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 11
                         },
                         new
                         {
@@ -1122,17 +1749,17 @@ namespace PokemonReviewApp.Migrations
                         new
                         {
                             RoleId = 2,
-                            PermissionId = 17
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 18
+                            PermissionId = 16
                         },
                         new
                         {
                             RoleId = 2,
                             PermissionId = 19
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 20
                         },
                         new
                         {
@@ -1143,11 +1770,6 @@ namespace PokemonReviewApp.Migrations
                         {
                             RoleId = 2,
                             PermissionId = 22
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 23
                         },
                         new
                         {
@@ -1167,17 +1789,87 @@ namespace PokemonReviewApp.Migrations
                         new
                         {
                             RoleId = 2,
-                            PermissionId = 29
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 30
+                            PermissionId = 28
                         },
                         new
                         {
                             RoleId = 2,
                             PermissionId = 31
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 32
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 33
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 34
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 37
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 38
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 39
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 40
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 43
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 44
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 45
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 46
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 49
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 50
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 51
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 52
                         },
                         new
                         {
@@ -1187,12 +1879,7 @@ namespace PokemonReviewApp.Migrations
                         new
                         {
                             RoleId = 3,
-                            PermissionId = 5
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            PermissionId = 9
+                            PermissionId = 7
                         },
                         new
                         {
@@ -1202,12 +1889,7 @@ namespace PokemonReviewApp.Migrations
                         new
                         {
                             RoleId = 3,
-                            PermissionId = 17
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            PermissionId = 21
+                            PermissionId = 19
                         },
                         new
                         {
@@ -1217,12 +1899,22 @@ namespace PokemonReviewApp.Migrations
                         new
                         {
                             RoleId = 3,
-                            PermissionId = 26
+                            PermissionId = 31
                         },
                         new
                         {
                             RoleId = 3,
-                            PermissionId = 29
+                            PermissionId = 37
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 38
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 43
                         });
                 });
 
@@ -1256,9 +1948,6 @@ namespace PokemonReviewApp.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RoleId1")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdatedDateTime")
                         .HasColumnType("datetime2");
 
@@ -1272,8 +1961,6 @@ namespace PokemonReviewApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("RoleId1");
 
                     b.ToTable("Users");
                 });
@@ -1447,14 +2134,10 @@ namespace PokemonReviewApp.Migrations
             modelBuilder.Entity("PokemonReviewApp.Models.User", b =>
                 {
                     b.HasOne("PokemonReviewApp.Models.Role", "Role")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("PokemonReviewApp.Models.Role", null)
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId1");
 
                     b.Navigation("Role");
                 });

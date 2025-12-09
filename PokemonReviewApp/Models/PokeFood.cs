@@ -10,6 +10,17 @@ namespace PokemonReviewApp.Models
         public Pokemon Pokemon { get; set; }
         public Food Food { get; set; }
         public double Quantity { get; set; }   // Foreign Key
+
+
+
+        public int CreatedUserId { get; set; }
+        public DateTime CreatedDateTime { get; set; }
+        public int? UpdatedUserId { get; set; }  
+        public DateTime? UpdatedDateTime { get; set; }
+
+        public bool IsDeleted { get; set; }
+        public int? DeletedUserId { get; set; }
+        public DateTime? DeletedDateTime { get; set; }
     }
     //Join entity olduğu icin Audit entity base inherite edilmiyor.
     //SoftDelete gercek enttiylere yapılır. Pokemon, Food, Permission gibi. 

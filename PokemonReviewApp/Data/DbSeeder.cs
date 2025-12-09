@@ -1,100 +1,169 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PokemonReviewApp.Models;
-using System.Data;
 
-namespace PokemonReviewApp.Data
+public static class DbSeeder
 {
-    public static class DbSeeder
+    public static void Seed(ModelBuilder modelBuilder)
     {
-        public static void Seed(ModelBuilder modelbuilder)
+        // ============================
+        // 1) ANA DOMAINLER
+        // ============================
+        string[] mainDomains = new[]
         {
+            "Category",
+            "Country",
+            "Food",
+            "Owner",
+            "Pokemon",
+            "Property",
+            "Review",
+            "Reviewer",
+            "User"       // Manager CRUD yapacak
+        };
 
-            var permissionNames = new[]
-            {
-                "ListCategory", "AddCategory", "UpdateCategory", "DeleteCategory",
-                "ListCountry", "AddCountry", "UpdateCountry", "DeleteCountry",
-                "ListFood", "AddFood", "UpdateFood", "DeleteFood",
-                "ListOwner", "AddOwner", "UpdateOwner", "DeleteOwner",
-                "ListPokemon", "AddPokemon", "UpdatePokemon", "DeletePokemon",
-                "ListProperty", "AddProperty", "UpdateProperty", "DeleteProperty",
-                "ListReview", "AddReview", "UpdateReview", "DeleteReview",
-                "ListReviewer", "AddReviewer", "UpdateReviewer", "DeleteReviewer",
-            };
-            var permissions = new List<Permission>();
-            int pid = 1;
+        // ============================
+        // 2) ADMIN DOMAINLERİ
+        // (Sadece admin görebilir)
+        // ============================
+        string[] adminOnlyDomains = new[]
+        {
+            "UserLog",
+            "PokemonLog",
+            "Permission",
+            "RolePermission",
+            "Role"
+        };
 
-            foreach (var name in permissionNames)
+        // ============================
+        // 3) ACTION SET
+        // ============================
+        string[] actions = new[]
+        {
+            "List",
+            "Add",
+            "Update",
+            "Delete",
+            "Restore",
+            "ListDeleted"
+        };
 
+        // ============================
+        // 4) PERMISSION GENERATION
+        // ============================
+        var permissions = new List<Permission>();
+        int pid = 1;
+
+        // Main domain permissions
+        foreach (var domain in mainDomains)
+        {
+            foreach (var action in actions)
             {
                 permissions.Add(new Permission
                 {
                     Id = pid++,
-                    PermissionName = name,
-
+                    PermissionName = $"{domain}.{action}"
                 });
             }
+        }
 
-            modelbuilder.Entity<Permission>().HasData(permissions);
-
-            modelbuilder.Entity<Role>().HasData(
-
-                new Role { Id = 1, RoleName = "Admin" },
-                new Role { Id = 2, RoleName = "Manager" },
-                new Role { Id = 3, RoleName = "User"}
-                );
-
-            var rolePermissions = new List<RolePermission>();
-
-
-            for (int i = 1; i <= permissions.Count; i++)
+        // Admin-only domain permissions (admin full access)
+        foreach (var domain in adminOnlyDomains)
+        {
+            foreach (var action in actions)
             {
-                rolePermissions.Add(new RolePermission
+                permissions.Add(new Permission
                 {
-                    RoleId = 1,
-                    PermissionId = i,
+                    Id = pid++,
+                    PermissionName = $"{domain}.{action}"
                 });
             }
+        }
 
-            var managerAllowed = permissions
-                .Where(p =>
-                !p.PermissionName.Contains("DeleteCategory") &&
-                !p.PermissionName.Contains("DeleteCountry") &&
-                !p.PermissionName.Contains("DeleteFood") &&
-                !p.PermissionName.Contains("DeleteOwner") &&
-                !p.PermissionName.Contains("DeletePokemon") &&
-                !p.PermissionName.Contains("DeleteProperty") &&
-                !p.PermissionName.Contains("DeleteReview") &&
-                !p.PermissionName.Contains("DeleteReviewer")
-                );
+        modelBuilder.Entity<Permission>().HasData(permissions);
 
-            foreach (var perm in managerAllowed)
+        // ============================
+        // 5) ROLES
+        // ============================
+        modelBuilder.Entity<Role>().HasData(
+            new Role { Id = 1, RoleName = "Admin" },
+            new Role { Id = 2, RoleName = "Manager" },
+            new Role { Id = 3, RoleName = "User" }
+        );
+
+        // ============================
+        // 6) ROLE -> PERMISSION MAPPING
+        // ============================
+        var rolePermissions = new List<RolePermission>();
+
+        // ------------------------------------------
+        // ADMIN -> FULL ACCESS
+        // ------------------------------------------
+        foreach (var perm in permissions)
+        {
+            rolePermissions.Add(new RolePermission
+            {
+                RoleId = 1,
+                PermissionId = perm.Id
+            });
+        }
+
+        // ------------------------------------------
+        // MANAGER -> CRUD (DELETE/RESTORE/LISTDELETED YOK)
+        // User için: CRUD 
+        // ------------------------------------------
+        // MANAGER: only List / Add / Update / Delete (NO Restore, NO ListDeleted)
+        foreach (var perm in permissions)
+        {
+            bool isAdminOnlyDomain = adminOnlyDomains
+                .Any(d => perm.PermissionName.StartsWith(d + "."));
+
+            if (isAdminOnlyDomain)
+                continue;
+
+            bool isAllowed =
+                perm.PermissionName.EndsWith(".List") ||
+                perm.PermissionName.EndsWith(".Add") ||
+                perm.PermissionName.EndsWith(".Update") ||
+                perm.PermissionName.EndsWith(".Delete");
+
+            if (isAllowed)
             {
                 rolePermissions.Add(new RolePermission
                 {
                     RoleId = 2,
                     PermissionId = perm.Id
-
                 });
             }
+        }
 
-            var UserAllowed = permissions
-                .Where(p =>
-                p.PermissionName.StartsWith("List") ||
-                p.PermissionName == "AddReview")
-                .Select(p => p.Id)
-            .ToList();
-            foreach (var userPermId in UserAllowed)
+
+        // ------------------------------------------
+        // USER -> Only List (+ Review.Add)
+        // ------------------------------------------
+        foreach (var perm in permissions)
+        {
+            bool allowed =
+                perm.PermissionName.EndsWith(".List") ||
+                perm.PermissionName == "Review.Add";
+
+            // Admin-only domain? User access asla yok.
+            if (adminOnlyDomains.Any(ad => perm.PermissionName.StartsWith(ad + ".")))
+                allowed = false;
+
+            // User "User" domainini göremez
+            if (perm.PermissionName.StartsWith("User."))
+                allowed = false;
+
+            if (allowed)
             {
                 rolePermissions.Add(new RolePermission
                 {
                     RoleId = 3,
-                    PermissionId = userPermId
-
+                    PermissionId = perm.Id
                 });
             }
-
-            modelbuilder.Entity<RolePermission>().HasData(rolePermissions);
-
         }
+
+        modelBuilder.Entity<RolePermission>().HasData(rolePermissions);
     }
 }

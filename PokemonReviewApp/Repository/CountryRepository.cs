@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
@@ -46,8 +47,10 @@ namespace PokemonReviewApp.Repository
                 .Any(c => c.Id == id);
         }
 
-        public bool CreateCountry(Country country)
+        public bool CreateCountry(Country country, int userId)
         {
+            country.CreatedUserId = userId;
+            country.CreatedDateTime = DateTime.Now;
             _context.Add(country);
             return Save();
         }
@@ -59,8 +62,10 @@ namespace PokemonReviewApp.Repository
 
         }
 
-        public bool UpdateCountry(Country country)
+        public bool UpdateCountry(Country country, int userId)
         {
+            country.UpdatedUserId = userId;
+            country.UpdatedDateTime = DateTime.Now;
             _context.Update(country);
             return Save();
 
@@ -85,15 +90,33 @@ namespace PokemonReviewApp.Repository
         public void RestoreCountry(Country country)
         {
             country.IsDeleted = false;
+            country.DeletedUserId = null;
             country.DeletedDateTime = null;
             _context.Countries.Update(country);
         }
 
-        public void SoftDeleteCountry(Country country)
+        public bool SoftDeleteCountry(int countryId, int userId)
         {
-            country.IsDeleted = true;
-            country.DeletedDateTime = DateTime.Now;
-            _context.Countries.Update(country);
+            var entity = _context.Countries
+                 .FirstOrDefault(c => c.Id == countryId);
+
+            if (entity == null)
+                return false;
+
+            entity.IsDeleted = true;
+            entity.DeletedUserId = userId;
+            entity.DeletedDateTime = DateTime.Now;
+            entity.UpdatedUserId = userId;
+            entity.UpdatedDateTime = DateTime.Now;
+
+            return Save();
+        }
+
+        public ICollection<Country> GetCountriesIncludingDeleted()
+        {
+            return _context.Countries
+               .IgnoreQueryFilters()
+               .ToList();
         }
     }
 }

@@ -17,37 +17,86 @@ namespace PokemonReviewApp.Repository
             _mapper = mapper;
         }
 
-        public bool CreateReviewer(Reviewer reviewer)
+        public bool CreateReviewer(Reviewer reviewer, int userId)
         {
+            reviewer.CreatedUserId = userId;
+            reviewer.CreatedDateTime = DateTime.Now;
+            reviewer.UpdatedUserId = userId;
+            reviewer.UpdatedDateTime = DateTime.Now;
+            reviewer.IsDeleted = false;
+
             _context.Add(reviewer);
-                return Save();
+            return Save();
 
         }
 
-        public bool DeleteReviewer(Reviewer reviewer)
+
+        public bool SoftDeleteReviewer(int reviewerId, int userId)
         {
-            _context.Remove(reviewer);
+            var reviewer = _context.Reviewers
+                            .IgnoreQueryFilters()
+                            .FirstOrDefault(r => r.Id == reviewerId);
+
+            if (reviewer == null)
+                return false;
+
+            reviewer.IsDeleted = true;
+            reviewer.DeletedUserId = userId;
+            reviewer.DeletedDateTime = DateTime.Now;
+            reviewer.UpdatedUserId = userId;
+            reviewer.UpdatedDateTime = DateTime.Now;
+
+            _context.Update(reviewer);
             return Save();
         }
 
         public Reviewer GetReviewer(int reviewerId)
         {
-                        return _context.Reviewers.Where(r => r.Id == reviewerId).Include(e => e.Reviews).FirstOrDefault();
-
+            return _context.Reviewers
+                           .Include(r => r.Reviews)
+                           .FirstOrDefault(r => r.Id == reviewerId && !r.IsDeleted);
         }
+
+        public Reviewer GetReviewerIncludingDeleted(int id)
+        {
+            return _context.Reviewers
+                           .IgnoreQueryFilters()
+                           .Include(r => r.Reviews)
+                           .FirstOrDefault(r => r.Id == id);
+        }
+
         public ICollection<Reviewer> GetReviewers()
         {
             return _context.Reviewers
-            .ToList();
+                .Include(r => r.Reviews)
+                .Where(r => !r.IsDeleted)
+                .ToList();
+        }
+
+        public ICollection<Reviewer> GetReviewersIncludingDeleted()
+        {
+            return _context.Reviewers
+                            .IgnoreQueryFilters()
+                            .Include(r => r.Reviews)
+                            .ToList();
         }
 
         public ICollection<Review> GetReviewsByAReviewer(int reviewerId)
         {
             return _context.Reviews
-                           .Where(r => r.Reviewer.Id == reviewerId)
-                           .ToList();
+                .Where(r => r.Reviewer.Id == reviewerId)
+                .ToList();
         }
 
+        public bool RestoreReviewer(Reviewer reviewer)
+        {
+            reviewer.IsDeleted = false;
+            reviewer.DeletedUserId = null;
+            reviewer.DeletedDateTime = null;
+
+            _context.Update(reviewer);
+            return Save();
+        }
         public bool ReviewerExists(int reviewerId)
         {
             return _context.Reviewers.Any(r => r.Id == reviewerId);
@@ -60,10 +109,24 @@ namespace PokemonReviewApp.Repository
 
         }
 
-        public bool UpdateReviewer(Reviewer reviewer)
+        public bool UpdateReviewer(Reviewer reviewer, int userId)
         {
-            _context.Update(reviewer);
+            var existing = _context.Reviewers
+                .IgnoreQueryFilters()
+                .FirstOrDefault(r => r.Id == reviewer.Id);
+
+            if (existing == null)
+                return false;
+
+            existing.FirstName = reviewer.FirstName;
+            existing.LastName = reviewer.LastName;
+
+            existing.UpdatedUserId = userId;
+            existing.UpdatedDateTime = DateTime.Now;
+
+            _context.Update(existing);
             return Save();
         }
+
     }
 }

@@ -1,7 +1,7 @@
-﻿using PokemonReviewApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace PokemonReviewApp.Repository
 {
@@ -14,103 +14,141 @@ namespace PokemonReviewApp.Repository
             _context = context;
         }
 
+        // ============================================
+        // GET ACTIVE ROLES
+        // ============================================
         public ICollection<Role> GetRoles()
         {
             return _context.Roles
-                .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
-                .OrderBy(r => r.Id)
+                .Where(r => !r.IsDeleted)
                 .ToList();
         }
+
+        // ============================================
+        // GET DELETED ROLES
+        // ============================================
         public ICollection<Role> GetDeletedRoles()
         {
             return _context.Roles
                 .IgnoreQueryFilters()
                 .Where(r => r.IsDeleted)
-                .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
-                .OrderBy(r => r.Id)
-                .ToList();
-        }
-       
-
-        public ICollection<Permission> GetPermissionsByRoleId(int roleId)
-        {
-            return _context.Roles
-                .Where(r => r.Id == roleId)
-                .Include(r => r.RolePermissions)
-                    .ThenInclude(rp => rp.Permission)
-                .SelectMany(r => r.RolePermissions.Select(rp => rp.Permission))
                 .ToList();
         }
 
-
+        // ============================================
+        // GET BY ID (Active only)
+        // ============================================
         public Role GetRoleById(int id)
         {
             return _context.Roles
-                .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
+                .FirstOrDefault(r => r.Id == id && !r.IsDeleted);
+        }
+
+        // ============================================
+        // GET BY ID (Including Deleted)
+        // ============================================
+        public Role GetRoleIncludingDeleted(int id)
+        {
+            return _context.Roles
+                .IgnoreQueryFilters()
                 .FirstOrDefault(r => r.Id == id);
         }
 
+        // ============================================
+        // GET ROLE BY NAME
+        // ============================================
+        public Role GetRoleByName(string name)
+        {
+            return _context.Roles
+                .FirstOrDefault(r => r.RoleName.ToLower() == name.ToLower() && !r.IsDeleted);
+        }
+
+        // ============================================
+        // EXISTENCE CHECK
+        // ============================================
         public bool RoleExists(int id)
         {
             return _context.Roles.Any(r => r.Id == id);
         }
 
-        public bool CreateRole(Role role)
-        {
-            _context.Add(role);
-            return Save();
-        }
-
-        public bool UpdateRole(Role role)
-        {
-            _context.Update(role);
-            return Save();
-        }
-
-
-        public bool Save()
-        {
-            return _context.SaveChanges() > 0;
-        }
-
-        public Role GetRoleByName(string name)
-        {
-            return _context.Roles
-                .FirstOrDefault(r => r.RoleName == name);
-        }
-
-        public Role GetRoleIncludingDeleted(int id)
-        {
-            return _context.Roles
-                .IgnoreQueryFilters()
-                .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
-                .FirstOrDefault(r => r.Id == id);
-
-        }
-
         public bool RoleExists(string name)
         {
-           return _context.Roles.Any(r => r.RoleName == name);
+            return _context.Roles.Any(r => r.RoleName.ToLower() == name.ToLower());
         }
 
-        public bool SoftDeleteRole(Role role)
+        // ============================================
+        // CREATE ROLE (AUDIT INCLUDED)
+        // ============================================
+        public bool CreateRole(Role role, int userId)
         {
-            role.IsDeleted = true;
-            role.DeletedDateTime = DateTime.Now;
-            role.DeletedUserId = 1;
+            role.CreatedUserId = userId;
+            role.CreatedDateTime = DateTime.Now;
+            role.UpdatedUserId = userId;
+            role.UpdatedDateTime = DateTime.Now;
+            role.IsDeleted = false;
+
+            _context.Roles.Add(role);
             return Save();
         }
 
+        // ============================================
+        // UPDATE ROLE (AUDIT INCLUDED)
+        // ============================================
+        public bool UpdateRole(Role role, int userId)
+        {
+            role.UpdatedUserId = userId;
+            role.UpdatedDateTime = DateTime.Now;
+
+            _context.Roles.Update(role);
+            return Save();
+        }
+
+        // ============================================
+        // SOFT DELETE ROLE
+        // ============================================
+        public bool SoftDeleteRole(Role role, int userId)
+        {
+            role.IsDeleted = true;
+            role.DeletedUserId = userId;
+            role.DeletedDateTime = DateTime.Now;
+
+            role.UpdatedUserId = userId;
+            role.UpdatedDateTime = DateTime.Now;
+
+            _context.Roles.Update(role);
+            return Save();
+        }
+
+        // ============================================
+        // RESTORE ROLE (NO AUDIT CHANGES – as you wanted)
+        // ============================================
         public bool RestoreRole(Role role)
         {
             role.IsDeleted = false;
-            role.DeletedDateTime = null;
             role.DeletedUserId = null;
+            role.DeletedDateTime = null;
+
+            _context.Roles.Update(role);
             return Save();
+        }
+
+        // ============================================
+        // GET PERMISSIONS OF A ROLE
+        // ============================================
+        public ICollection<Permission> GetPermissionsByRoleId(int roleId)
+        {
+            return _context.RolePermissions
+                .Where(rp => rp.RoleId == roleId)
+                .Select(rp => rp.Permission)
+                .ToList();
+        }
+
+        // ============================================
+        // SAVE
+        // ============================================
+        public bool Save()
+        {
+            return _context.SaveChanges() > 0;
         }
     }
 }

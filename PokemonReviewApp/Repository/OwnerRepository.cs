@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
+using System.Diagnostics.Metrics;
 
 namespace PokemonReviewApp.Repository
 {
@@ -18,13 +19,14 @@ namespace PokemonReviewApp.Repository
         public ICollection<Owner> GetOwners()
         {
             return _context.Owners
-                .ToList();
+        .Include(o => o.Country)
+        .ToList();
         }
         public Owner GetOwner(int ownerId)
         {
             return _context.Owners
-                .Where(o => o.Id == ownerId)
-                .FirstOrDefault();
+        .Include(o => o.Country)
+        .FirstOrDefault(o => o.Id == ownerId);
         }
         public ICollection<Pokemon> GetPokemonByOwner(int ownerId)
         {
@@ -46,8 +48,17 @@ namespace PokemonReviewApp.Repository
                 .Any(o => o.Id == ownerId);
         }
 
-        public bool CreateOwner(Owner owner)
+        public bool CreateOwner(Owner owner, int userId)
         {
+
+            owner.CreatedUserId = userId;
+            owner.CreatedDateTime = DateTime.Now;
+
+            owner.UpdatedUserId = userId;
+            owner.UpdatedDateTime = DateTime.Now;
+
+            owner.IsDeleted = false;
+
             _context.Add(owner);
             return Save();
         }
@@ -58,23 +69,30 @@ namespace PokemonReviewApp.Repository
             return saved > 0 ? true : false;
         }
 
-        public bool UpdateOwner(Owner owner)
+        public bool UpdateOwner(Owner owner, int userId)
         {
+            owner.UpdatedUserId = userId;
+            owner.UpdatedDateTime = DateTime.Now;
             _context.Update(owner);
             return Save();
         }
 
-        public bool DeleteOwner(Owner owner)
-        {
-            _context.Remove(owner);
-            return Save();
-        }
 
-        public void SoftDeleteOwner(Owner owner)
+        public bool SoftDeleteOwner(int ownerId, int userId)
         {
-            owner.IsDeleted = true;
-            owner.DeletedDateTime = DateTime.Now;
-            _context.Owners.Update(owner);
+            var entity = _context.Owners
+                  .FirstOrDefault(c => c.Id == ownerId);
+
+            if (entity == null)
+                return false;
+
+            entity.IsDeleted = true;
+            entity.DeletedUserId = userId;
+            entity.DeletedDateTime = DateTime.Now;
+            entity.UpdatedUserId = userId;
+            entity.UpdatedDateTime = DateTime.Now;
+
+            return Save();
         }
 
         public Owner GetOwnerIncludingDeleted(int id)
@@ -88,6 +106,7 @@ namespace PokemonReviewApp.Repository
         public void RestoreOwner(Owner owner)
         {
             owner.IsDeleted = false;
+            owner.DeletedUserId = null;
             owner.DeletedDateTime = null;
             _context.Owners.Update(owner);
         }
@@ -95,10 +114,17 @@ namespace PokemonReviewApp.Repository
         public ICollection<Owner> GetDeletedOwners()
         {
             return _context.Owners
-                .IgnoreQueryFilters()
-                .Where(o => o.IsDeleted)
-                .OrderBy(o => o.Id)
-                .ToList();
+       .IgnoreQueryFilters()
+       .Include(o => o.Country)
+       .Where(o => o.IsDeleted == true)
+       .ToList();
+        }
+
+        public ICollection<Country> GetCountriesIncludingDeleted()
+        {
+            return _context.Countries
+               .IgnoreQueryFilters()
+               .ToList();
         }
     }
 }

@@ -18,9 +18,27 @@ namespace PokemonReviewApp.Repository
                 .Where(e => e.Id == id)
                 .FirstOrDefault();
         }
+        public bool SoftDeleteCategory(int categoryId, int userId)
+        {
+            var entity = _context.Categories
+                .FirstOrDefault(c => c.Id == categoryId);
+
+            if (entity == null)
+                return false;
+
+            entity.IsDeleted = true;
+            entity.DeletedUserId = userId;
+            entity.DeletedDateTime = DateTime.Now;
+            entity.UpdatedUserId = userId;
+            entity.UpdatedDateTime = DateTime.Now;
+
+            return Save();
+        }
+
         public void RestoreCategory(Category category)
         {
             category.IsDeleted = false;
+            category.DeletedUserId = null;
             category.DeletedDateTime = null;
             _context.Update(category);
         }
@@ -34,18 +52,21 @@ namespace PokemonReviewApp.Repository
         {
             return _context.PokemonCategories
                 .Where(e => e.CategoryId == categoryId)
-                .Select(c => c.Pokemon).ToList();
+                .Select(c => c.Pokemon)
+                .ToList();
 
         }
         public bool CategoryExist(int id)
         {
             return _context.Categories.Any(c => c.Id == id);
         }
-        public bool CreateCategory(Category category)
+        public bool CreateCategory(Category category, int userId)
         {
             //Change Tracking: add, update, modify
             //Connected or Disconnected
             //EntityState.Added = disconnected state
+            category.CreatedUserId = userId;
+            category.CreatedDateTime = DateTime.Now;
             _context.Add(category);
            
             return Save();
@@ -56,8 +77,11 @@ namespace PokemonReviewApp.Repository
         //    _context.Remove(category);
         //    return Save();
         //}
-        public bool UpdateCategory(Category category)
+        public bool UpdateCategory(Category category, int userId)
         {
+            category.UpdatedUserId = userId;
+            category.UpdatedDateTime = DateTime.Now;
+
             _context.Update(category);
             return Save();
         }
@@ -82,6 +106,13 @@ namespace PokemonReviewApp.Repository
                    .Where(c => c.IsDeleted)    // sadece silinmiş olanlar
                    .OrderBy(c => c.Id)
                    .ToList();
+        }
+
+        public ICollection<Category> GetCategoriesIncludingDeleted()
+        {
+            return _context.Categories
+                .IgnoreQueryFilters()
+                .ToList();
         }
     }
 }

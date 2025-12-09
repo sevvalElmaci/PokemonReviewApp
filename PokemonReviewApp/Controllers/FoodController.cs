@@ -1,20 +1,22 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Helpers;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using PokemonReviewApp.Repository;
-using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
+
 namespace PokemonReviewApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FoodController : Controller
     {
         private readonly IFoodRepository _foodRepository;
         private readonly IMapper _mapper;
         private readonly IPokemonRepository _pokemonRepository;
+
         public FoodController(IPokemonRepository pokemonRepository, IFoodRepository foodRepository, IMapper mapper)
         {
             _foodRepository = foodRepository;
@@ -22,39 +24,41 @@ namespace PokemonReviewApp.Controllers
             _pokemonRepository = pokemonRepository;
         }
 
+
+        [Authorize(Policy = "Food.List")]
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Food>))]
-        //IEnumerable<Food> means a collection of Food objects
         public IActionResult GetFoods()
         {
-            var foods = _mapper
-                .Map<List<FoodDto>>(_foodRepository.GetFoods());
-            //Mapping Food objects to FoodDto objects
-            //Entity to DTO conversion
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
+            var foods = _mapper.Map<List<FoodDto>>(_foodRepository.GetFoods());
             return Ok(foods);
         }
-        [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(Food))]
-        [ProducesResponseType(400)]
 
+        [Authorize(Policy = "Food.List")]
+        [HttpGet("{id}")]
         public IActionResult GetFood(int id)
         {
             if (!_foodRepository.FoodExists(id))
                 return NotFound();
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
 
-            var food = _mapper
-                .Map<FoodDto>(_foodRepository.GetFood(id));
+            var food = _mapper.Map<FoodDto>(_foodRepository.GetFood(id));
             return Ok(food);
         }
+
+        [Authorize(Policy = "Food.List")]
+        [HttpGet("by-pokemon/{pokeId}")]
+        public IActionResult GetFoodsByPokemon(int pokeId)
+        {
+            var foods = _mapper.Map<List<FoodDto>>(_pokemonRepository.GetFoodsByPokemon(pokeId));
+
+            if (foods == null || !foods.Any())
+                return NotFound(new { message = $"No foods found for Pokemon {pokeId}" });
+
+            return Ok(foods);
+        }
+
+
+        [Authorize(Policy = "Food.Add")]
         [HttpPost]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
         public IActionResult CreateFood([FromBody] FoodDtoCreate foodCreate)
         {
             if (foodCreate == null)
@@ -63,120 +67,100 @@ namespace PokemonReviewApp.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var food = _foodRepository.GetFoods()
-            .Where(f => f.Name.Trim().ToUpper() == foodCreate.Name.TrimEnd().ToUpper())
-                .FirstOrDefault();
+            var allFoods = _foodRepository.GetFoodsIncludingDeleted();
 
-            //Trim(): removes all leading
-            //and trailing white-space characters from the current string.
-            //Toupper(): converts a string to uppercase.
-            //TrimEnd(): removes all trailing white-space characters from the current string.
+            var activeFood = allFoods.FirstOrDefault(f =>
+                f.Name.Trim().ToUpper() == foodCreate.Name.Trim().ToUpper() &&
+                f.IsDeleted == false);
 
-            //Her zaman düşün:
-            //“Lambda içindeki harf(f, c, p...) bu tablodaki bir satırdır.
-            //Onun alanlarına(.Id, .Name, .Type...) ulaşırım
-            //ve onları benim elimdeki değişkenlerle karşılaştırırım.”
+            var deletedFood = allFoods.FirstOrDefault(f =>
+                f.Name.Trim().ToUpper() == foodCreate.Name.Trim().ToUpper() &&
+                f.IsDeleted == true);
 
-            if (food != null)
+            // Aktif duplicate
+            if (activeFood != null)
+                return Conflict("Food already exists");
+
+            // Silinmiş duplicate
+            if (deletedFood != null)
             {
-                ModelState.AddModelError("", "Food already exists");
-                return StatusCode(400, ModelState);
+                if (User.IsInRole("Admin"))
+                    return Conflict("A deleted food with this name exists. You can restore it.");
+
+                _foodRepository.RestoreFood(deletedFood);
+                _foodRepository.Save();
+
+                return Ok(new
+                {
+                    message = "Food restored successfully",
+                    food = _mapper.Map<FoodDto>(deletedFood)
+                });
             }
 
-            var foodMap = _mapper
-                .Map<Food>(foodCreate);
-            if (!_foodRepository.CreateFood(foodMap))
-            {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
-            }
+            // Yeni kayıt
+            var foodMap = _mapper.Map<Food>(foodCreate);
+
+            int userId = int.Parse(User.FindFirst("userId").Value);
+
+            if (!_foodRepository.CreateFood(foodMap, userId))
+                return StatusCode(500, "Something went wrong while saving");
 
             return CreatedAtAction(nameof(GetFood), new { id = foodMap.Id }, foodMap);
-            //CreatedAtAction: returns a 201 status code response
         }
 
+
+
+        [Authorize(Policy = "Food.Update")]
         [HttpPut("{id}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseTypeAttribute(204)]
-        [ProducesResponseType(404)]
-
         public IActionResult UpdateFood(int id, [FromBody] FoodDto updatedFood)
-        //id: which food to update. comes from URL
-        //updatedFood: new data for the food. comes from HHTP BODY -json
         {
-            if (updatedFood == null)
-                return BadRequest(ModelState);
+            if (updatedFood == null || updatedFood.Id != id)
+                return BadRequest();
 
-            if (id != updatedFood.Id)
-                return BadRequest(ModelState);
-
-            if (id != updatedFood.Id)
-            {
-                ModelState.AddModelError("", "This ID Duo is not matching");
-                return BadRequest(ModelState);
-            }
-            if (!_foodRepository.FoodExists(id)) { 
-            ModelState.AddModelError("", "This ID not found");
-            return NotFound(ModelState);
-        }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            bool duplicateExists = DuplicateCheckHelper.ExistsDuplicate(
-    _foodRepository.GetFoods(),
-    f => f.Name,
-    updatedFood.Name,
-    id,
-    f => f.Id
-);
-            if (duplicateExists)
-            {
-                ModelState.AddModelError("", "A food with the same name already exists");
-                return Conflict(ModelState);
-            }
-
-
-            //  Mevcut entity’yi getirip alanlarını güncelle
-            var existingFood = _foodRepository.GetFood(id);
-            if (existingFood == null)
+            if (!_foodRepository.FoodExists(id))
                 return NotFound();
 
+            bool duplicateExists = DuplicateCheckHelper.ExistsDuplicate(
+                _foodRepository.GetFoods(),
+                f => f.Name,
+                updatedFood.Name,
+                id,
+                f => f.Id
+            );
+
+            if (duplicateExists)
+                return Conflict("Another food with this name already exists");
+
+            var existingFood = _foodRepository.GetFood(id);
             existingFood.Name = updatedFood.Name;
 
-            // EF zaten tracked olduğu için yeni nesne oluşturma
-            if (!_foodRepository.UpdateFood(existingFood))
-            {
-                ModelState.AddModelError("", "Something went wrong while updating");
-                return StatusCode(500, ModelState);
-            }
-            return NoContent();
-            //Put method does not return any content after updating 
-            //cause you didnt create anything new
-            // you just updated existing one
-            //mappleme : DTO -> entity
+            int userId = int.Parse(User.FindFirst("userId").Value);    
 
-            //update için mappleme yapmıyoruz, çünkü EF'in izlediği (tracked ettiği) bir entity var zaten
-            //DTO'dan yeni bir entity oluşturursan Ef der ki: BEN HANGİSİNİ İZLİYİM??
-            //update için mevcut entity'i manuel güncellemek mantıklıdır.
+            if (!_foodRepository.UpdateFood(existingFood, userId))
+                return StatusCode(500, "Something went wrong while updating");
+
+            return NoContent();
         }
 
+        [Authorize(Policy = "Food.Delete")]
         [HttpDelete("{id}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(400)]
-
         public IActionResult SoftDeleteFood(int id)
         {
             var food = _foodRepository.GetFood(id);
             if (food == null)
                 return NotFound();
 
-            _foodRepository.SoftDelete(food);
-            _foodRepository.Save();
+            int userId = int.Parse(User.FindFirst("userId").Value);
+
+            if (!_foodRepository.SoftDelete(id, userId))
+                return StatusCode(500, "Something went wrong while deleting");
 
             return NoContent();
         }
 
+
+
+        [Authorize(Policy = "Food.Restore")]
         [HttpPost("restore/{id}")]
         public IActionResult RestoreFood(int id)
         {
@@ -184,35 +168,32 @@ namespace PokemonReviewApp.Controllers
             if (food == null)
                 return NotFound("Food not found");
 
+            var duplicateActive = _foodRepository.GetFoodsIncludingDeleted()
+                .Any(f => f.Name.Trim().ToUpper() == food.Name.Trim().ToUpper()
+                       && f.IsDeleted == false
+                       && f.Id != id);
+
+            if (duplicateActive)
+            {
+                ModelState.AddModelError("",
+                    "Cannot restore. There is already an active food with the same name.");
+                return Conflict(ModelState);
+            }
+
             _foodRepository.RestoreFood(food);
             _foodRepository.Save();
 
-            return Ok("Food restored successfully");
+            return Ok("Food restored successfully!");
         }
+
+
+
+        [Authorize(Policy = "Food.ListDeleted")]
         [HttpGet("deleted")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<FoodDto>))]
         public IActionResult GetDeletedFoods()
         {
             var deletedFoods = _mapper.Map<List<FoodDto>>(_foodRepository.GetDeletedFoods());
             return Ok(deletedFoods);
         }
-
-
-        [HttpGet("by-pokemon/{pokeId}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<FoodDto>))]
-        [ProducesResponseType(404)]
-
-        public IActionResult GetFoodsByPokemon(int pokeId)
-        {
-            var foods = _mapper.Map<List<FoodDto>>(
-                _pokemonRepository.GetFoodsByPokemon(pokeId));
-            if (foods == null || !foods.Any())
-                return NotFound(new { message = $"No foods found for Pokemon {pokeId}" });
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-            return Ok(foods);
-        }
     }
 }
-

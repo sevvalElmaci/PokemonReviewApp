@@ -165,6 +165,7 @@ namespace PokemonReviewApp.Data
 
             var entries = ChangeTracker.Entries()
                 .Where(e => e.Entity is AuditEntityBase &&
+                e.Entity.GetType().Name.EndsWith("Log") == false &&
                             (e.State == EntityState.Added ||
                              e.State == EntityState.Modified ||
                              e.State == EntityState.Deleted));

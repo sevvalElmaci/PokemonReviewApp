@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PokemonReviewApp.Dto;
@@ -33,7 +34,7 @@ namespace PokemonReviewApp.Controllers
         }
         [HttpGet("{reviewerId}")]
         [ProducesResponseType(200, Type = typeof(Reviewer))]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(400)] 
 
         public IActionResult GetReviewer(int reviewerId)
         {
@@ -77,34 +78,34 @@ namespace PokemonReviewApp.Controllers
             if (reviewerCreate == null)
                 return BadRequest(ModelState);
 
-            var reviewers = _reviewerRepository.GetReviewers()
-                .Where(c => c.LastName.Trim().ToUpper() == reviewerCreate.LastName.TrimEnd().ToUpper())
-                .FirstOrDefault();
+            //var reviewers = _reviewerRepository.GetReviewers()
+            //    .Where(c => c.LastName.Trim().ToUpper() == reviewerCreate.LastName.TrimEnd().ToUpper())
+            //    .FirstOrDefault();
 
-            if (reviewers != null)
-            {
-                ModelState.AddModelError("", "Reviewer alreadry exists");
-                return StatusCode(422, ModelState);
-            }
+            //if (reviewers != null)
+            //{
+            //    ModelState.AddModelError("", "Reviewer alreadry exists");
+            //    return StatusCode(422, ModelState);
+            //}
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var reviewerMap = _mapper.Map<Reviewer>(reviewerCreate);
+            int userId = int.Parse(User.FindFirst("userId").Value);
 
-
-            if (!_reviewerRepository.CreateReviewer(reviewerMap))
+            if (!_reviewerRepository.CreateReviewer(reviewerMap, userId))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
-
             }
+
             return Ok("Successfully created");
 
 
         }
 
-
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPut("{reviewerId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -124,8 +125,10 @@ namespace PokemonReviewApp.Controllers
                 return BadRequest();
 
             var reviewerMap = _mapper.Map<Reviewer>(updatedReviewer);
+            int userId = int.Parse(User.FindFirst("userId").Value);
 
-            if (!_reviewerRepository.UpdateReviewer(reviewerMap))
+
+            if (!_reviewerRepository.UpdateReviewer(reviewerMap, userId))
             {
                 ModelState.AddModelError("", "Something went wrong while updating");
                 return StatusCode(500, ModelState);
@@ -133,33 +136,80 @@ namespace PokemonReviewApp.Controllers
 
             return NoContent();
         }
+        [Authorize(Policy = "Reviewer.Restore")]
+        [HttpPost("restore/{reviewerId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public IActionResult RestoreReviewer(int reviewerId)
+        {
+            var reviewer = _reviewerRepository.GetReviewerIncludingDeleted(reviewerId);
+
+            if (reviewer == null)
+                return NotFound("Reviewer not found.");
+
+            if (!reviewer.IsDeleted)
+                return BadRequest("Reviewer is already active.");
+
+            //// Prevent duplicate active reviewer
+            //var conflict = _reviewerRepository.GetReviewers()
+            //    .FirstOrDefault(r =>
+            //        r.FirstName.Trim().ToUpper() == reviewer.FirstName.Trim().ToUpper() &&
+            //        r.LastName.Trim().ToUpper() == reviewer.LastName.Trim().ToUpper() &&
+            //        r.Id != reviewer.Id);
+
+            //if (conflict != null)
+            //{
+            //    ModelState.AddModelError("", "An active reviewer with the same name already exists.");
+            //    return StatusCode(422, ModelState);
+            //}
+
+            if (!_reviewerRepository.RestoreReviewer(reviewer))
+            {
+                ModelState.AddModelError("", "Something went wrong while restoring reviewer.");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Reviewer restored successfully.");
+        }
+
+        [Authorize(Policy = "Reviewer.ListDeleted")]
+        [HttpGet("deleted")]
+        [ProducesResponseType(200)]
+        public IActionResult GetDeletedReviewers()
+        {
+            var deleted = _reviewerRepository
+                .GetReviewersIncludingDeleted()
+                .Where(r => r.IsDeleted)
+                .ToList();
+
+            var reviewersDto = _mapper.Map<List<ReviewerDto>>(deleted);
+
+            return Ok(reviewersDto);
+        }
 
 
+        [Authorize(Policy = "Reviewer.Delete")]
         [HttpDelete("{reviewerId}")]
         [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-
         public IActionResult DeleteReviewer(int reviewerId)
         {
             if (!_reviewerRepository.ReviewerExists(reviewerId))
-            {
                 return NotFound();
-            }
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            int userId = int.Parse(User.FindFirst("userId").Value);
 
-            var reviewerToDelete = _reviewerRepository.GetReviewer(reviewerId);
-
-            if (!_reviewerRepository.DeleteReviewer(reviewerToDelete))
+            if (!_reviewerRepository.SoftDeleteReviewer(reviewerId, userId))
             {
-                ModelState.AddModelError("", "Something went wrong deleting reviewer");
+                ModelState.AddModelError("", "Something went wrong deleting reviewer.");
                 return StatusCode(500, ModelState);
             }
 
             return NoContent();
         }
-    }
+
+    
+
+}
 }
 

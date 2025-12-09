@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
+using PokemonReviewApp.Helpers;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 
@@ -8,6 +10,7 @@ namespace PokemonReviewApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PokeFoodController : Controller
     {
         private readonly IPokeFoodRepository _pokeFoodRepository;
@@ -15,11 +18,10 @@ namespace PokemonReviewApp.Controllers
         private readonly IFoodRepository _foodRepository;
         private readonly IMapper _mapper;
 
-        public PokeFoodController(
-            IPokeFoodRepository pokeFoodRepository,
-            IPokemonRepository pokemonRepository,
-            IFoodRepository foodRepository,
-            IMapper mapper)
+        public PokeFoodController(IPokeFoodRepository pokeFoodRepository,
+                                  IPokemonRepository pokemonRepository,
+                                  IFoodRepository foodRepository,
+                                  IMapper mapper)
         {
             _pokeFoodRepository = pokeFoodRepository;
             _pokemonRepository = pokemonRepository;
@@ -27,97 +29,145 @@ namespace PokemonReviewApp.Controllers
             _mapper = mapper;
         }
 
-        // ✅ GET: /api/PokeFood
+        // ---------------------------
+        // GET ACTIVE LIST
+        // ---------------------------
+        [Authorize(Policy = "PokeFood.List")]
         [HttpGet]
-        [ProducesResponseType(200)]
         public IActionResult GetPokeFoods()
         {
-            var pokeFoods = _mapper.Map<List<PokeFoodDto>>(_pokeFoodRepository.GetPokeFoods());
-            return Ok(pokeFoods);
+            var list = _mapper.Map<List<PokeFoodDto>>(_pokeFoodRepository.GetPokeFoods());
+            return Ok(list);
         }
 
+
+        // ---------------------------
+        // GET BY COMPOSITE KEY
+        // ---------------------------
+        [Authorize(Policy = "PokeFood.List")]
         [HttpGet("{pokemonId}/{foodId}")]
         public IActionResult GetPokeFood(int pokemonId, int foodId)
         {
-            var pokeFood = _pokeFoodRepository.GetPokeFood(pokemonId, foodId);
-            if (pokeFood == null)
-                return NotFound("Relationship not found.");
+            var entity = _pokeFoodRepository.GetPokeFood(pokemonId, foodId);
+            if (entity == null) return NotFound();
 
-            return Ok(_mapper.Map<PokeFoodDto>(pokeFood));
+            return Ok(_mapper.Map<PokeFoodDto>(entity));
         }
 
-        // ✅ POST: /api/PokeFood
+
+        // ---------------------------
+        // CREATE
+        // ---------------------------
+        [Authorize(Policy = "PokeFood.Add")]
         [HttpPost]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public IActionResult CreatePokeFood([FromBody] PokeFoodDtoCreate pokeFood)
+        public IActionResult CreatePokeFood([FromBody] PokeFoodDtoCreate dto)
         {
-            if (pokeFood == null)
-                return BadRequest(ModelState);
+            if (dto == null) return BadRequest("Invalid request.");
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!_pokemonRepository.PokemonExists(dto.PokemonId))
+                return NotFound($"Pokemon {dto.PokemonId} not found.");
 
-            if (!_pokemonRepository.PokemonExists(pokeFood.PokemonId))
-                return NotFound($"Pokemon with ID {pokeFood.PokemonId} not found.");
+            if (!_foodRepository.FoodExists(dto.FoodId))
+                return NotFound($"Food {dto.FoodId} not found.");
 
-            if (!_foodRepository.FoodExists(pokeFood.FoodId))
-                return NotFound($"Food with ID {pokeFood.FoodId} not found.");
+            // SOFT DELETED KAYIT VAR MI?
+            var deleted = _pokeFoodRepository.GetPokeFoodIncludingDeleted(dto.PokemonId, dto.FoodId);
 
-            if (_pokeFoodRepository.PokeFoodExists(pokeFood.PokemonId, pokeFood.FoodId))
-                return BadRequest("This relationship already exists.");
-
-            var pokeFoodMap = _mapper.Map<PokeFood>(pokeFood);
-
-            if (!_pokeFoodRepository.CreatePokeFood(pokeFoodMap))
+            if (deleted != null && deleted.IsDeleted)
             {
-                ModelState.AddModelError("", "Something went wrong while saving the relationship.");
-                return StatusCode(500, ModelState);
+                // Restore → no audit
+                _pokeFoodRepository.RestorePokeFood(dto.PokemonId, dto.FoodId);
+                return Ok(new { message = "Restored successfully." });
             }
 
+            // ACTIVE EXISTS?
+            if (_pokeFoodRepository.PokeFoodExists(dto.PokemonId, dto.FoodId))
+                return Conflict("Relationship already exists.");
+
+            // CREATE
+            var entity = _mapper.Map<PokeFood>(dto);
+            int userId = int.Parse(User.FindFirst("userId").Value);
+
+            if (!_pokeFoodRepository.CreatePokeFood(entity, userId))
+                return StatusCode(500, "Error while saving.");
+
             return CreatedAtAction(nameof(GetPokeFood),
-                new { pokemonId = pokeFood.PokemonId, foodId = pokeFood.FoodId },
-                pokeFoodMap);
+                new { pokemonId = dto.PokemonId, foodId = dto.FoodId },
+                _mapper.Map<PokeFoodDto>(entity));
         }
 
-        // ✅ PUT: /api/PokeFood/{pokemonId}/{foodId}
-        // Body: { "quantity": 5.0 }
-        [HttpPut("{pokemonId:int}/{foodId:int}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public IActionResult UpdatePokeFood(int pokemonId, int foodId, [FromBody] PokeFoodDtoUpdate updatedPF)
+
+        // ---------------------------
+        // UPDATE
+        // ---------------------------
+        [Authorize(Policy = "PokeFood.Update")]
+        [HttpPut("{pokemonId}/{foodId}")]
+        public IActionResult UpdatePokeFood(int pokemonId, int foodId, [FromBody] PokeFoodDtoUpdate dto)
         {
-            if (updatedPF == null)
-                return BadRequest("Invalid request body.");
-
-            var existing = _pokeFoodRepository.GetPokeFood(pokemonId, foodId);
-            if (existing == null)
-                return NotFound($"Relationship with PokemonId={pokemonId} and FoodId={foodId} not found.");
-
-            existing.Quantity = updatedPF.Quantity;
-
-            if (!_pokeFoodRepository.UpdatePokeFood(existing))
-                return StatusCode(500, "Something went wrong while updating the relationship.");
-
-            return NoContent(); // 204 - success without body
-        }
-
-       
-        [HttpDelete("{pokemonId:int}/{foodId:int}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        public IActionResult DeletePokeFood(int pokemonId, int foodId)
-        {
-            var pokeFood = _pokeFoodRepository.GetPokeFood(pokemonId, foodId);
-            if (pokeFood == null)
+            var entity = _pokeFoodRepository.GetPokeFood(pokemonId, foodId);
+            if (entity == null)
                 return NotFound("Relationship not found.");
 
-            if (!_pokeFoodRepository.DeletePokeFood(pokeFood))
-                return StatusCode(500, "Something went wrong deleting the relationship.");
+            entity.Quantity = dto.Quantity;
+
+            int userId = int.Parse(User.FindFirst("userId").Value);
+
+            if (!_pokeFoodRepository.UpdatePokeFood(entity, userId))
+                return StatusCode(500, "Error updating.");
 
             return NoContent();
+        }
+
+
+        // ---------------------------
+        // SOFT DELETE
+        // ---------------------------
+        [Authorize(Policy = "PokeFood.Delete")]
+        [HttpDelete("{pokemonId}/{foodId}")]
+        public IActionResult SoftDeletePokeFood(int pokemonId, int foodId)
+        {
+            var entity = _pokeFoodRepository.GetPokeFoodIncludingDeleted(pokemonId, foodId);
+            if (entity == null) return NotFound();
+
+            int userId = int.Parse(User.FindFirst("userId").Value);
+
+            if (!_pokeFoodRepository.SoftDeletePokeFood(pokemonId, foodId, userId))
+                return StatusCode(500, "Delete failed.");
+
+            return NoContent();
+        }
+
+
+        // ---------------------------
+        // RESTORE
+        // ---------------------------
+        [Authorize(Policy = "PokeFood.Restore")]
+        [HttpPost("restore/{pokemonId}/{foodId}")]
+        public IActionResult RestorePokeFood(int pokemonId, int foodId)
+        {
+            var entity = _pokeFoodRepository.GetPokeFoodIncludingDeleted(pokemonId, foodId);
+            if (entity == null) return NotFound();
+
+            if (!entity.IsDeleted)
+                return BadRequest("Already active.");
+
+
+            if (!_pokeFoodRepository.RestorePokeFood(pokemonId, foodId))
+                return StatusCode(500, "Restore failed.");
+
+            return Ok("Restored successfully.");
+        }
+
+
+        // ---------------------------
+        // DELETED LIST
+        // ---------------------------
+        [Authorize(Policy = "PokeFood.ListDeleted")]
+        [HttpGet("deleted")]
+        public IActionResult GetDeletedPokeFoods()
+        {
+            var deleted = _mapper.Map<List<PokeFoodDto>>(_pokeFoodRepository.GetDeletedPokeFoods());
+            return Ok(deleted);
         }
     }
 }

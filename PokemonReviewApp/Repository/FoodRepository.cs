@@ -34,19 +34,25 @@ namespace PokemonReviewApp.Repository
         {
             return _context.Foods.Any(f => f.Id == id);
         }
-        public bool CreateFood(Food food)
+        public bool CreateFood(Food food, int userId)
         {
+            food.CreatedUserId = userId;
+            food.CreatedDateTime = DateTime.Now;
+
+            food.UpdatedUserId = userId;
+            food.UpdatedDateTime = DateTime.Now;
+
+            food.IsDeleted = false;
+
             _context.Add(food);
             return Save();
         }
 
-        public bool DeleteFood(Food food)
+       
+        public bool UpdateFood(Food food, int userId)
         {
-            _context.Remove(food);
-            return Save();
-        }
-        public bool UpdateFood(Food food)
-        {
+            food.UpdatedUserId = userId;
+            food.UpdatedDateTime = DateTime.Now;
             _context.Update(food);
             return Save();
         }
@@ -64,11 +70,21 @@ namespace PokemonReviewApp.Repository
                             .Select(f => f.Food).ToList();
         }
 
-        public void SoftDelete(Food food)
+        public bool SoftDelete(int foodId, int userId)
         {
-            food.IsDeleted = true;
-            food.DeletedDateTime = DateTime.Now;
-            _context.Foods.Update(food);
+            var entity = _context.Foods
+                   .FirstOrDefault(f => f.Id == foodId);
+
+            if (entity == null)
+                return false;
+
+            entity.IsDeleted = true;
+            entity.DeletedUserId = userId;
+            entity.DeletedDateTime = DateTime.Now;
+            entity.UpdatedUserId = userId;
+            entity.UpdatedDateTime = DateTime.Now;
+
+            return Save();
         }
 
         public Food GetFoodIncludingDeleted(int id)
@@ -81,6 +97,7 @@ namespace PokemonReviewApp.Repository
         public void RestoreFood(Food food)
         {
             food.IsDeleted = false;
+            food.DeletedUserId = null;
             food.DeletedDateTime = null;
             _context.Foods.Update(food);
         }
@@ -92,6 +109,13 @@ namespace PokemonReviewApp.Repository
                             .Where(f => f.IsDeleted)
                             .OrderBy(f => f.Id)
                             .ToList();
+        }
+
+        public ICollection<Food> GetFoodsIncludingDeleted()
+        {
+            return _context.Foods
+                          .IgnoreQueryFilters()
+                          .ToList();
         }
     }
 }

@@ -14,12 +14,13 @@ namespace PokemonReviewApp.Interfaces
         ICollection<Pokemon> GetPokemonByOwner(int ownerId);
         //Get pokemon list of a certain ownerId
         bool OwnerExists(int ownerId);  
-        bool CreateOwner(Owner owner);
-        bool UpdateOwner(Owner owner);
-        void SoftDeleteOwner(Owner owner);
+        bool CreateOwner(Owner owner, int userId);
+        bool UpdateOwner(Owner owner, int userId);
+        bool SoftDeleteOwner(int ownerId, int userId);
         Owner GetOwnerIncludingDeleted(int id);
         void RestoreOwner(Owner owner);
         ICollection<Owner> GetDeletedOwners();
+        ICollection<Country> GetCountriesIncludingDeleted();
 
         bool Save();
 
