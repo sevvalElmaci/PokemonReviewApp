@@ -8,6 +8,8 @@ namespace PokemonReviewApp.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime BirthDate { get; set; }
+        public User CreatedUser { get; set; }
+
 
         [JsonIgnore]
         public ICollection<Review> Reviews { get; set; }
@@ -19,11 +21,13 @@ namespace PokemonReviewApp.Models
         public ICollection<PokemonOwner> PokemonOwners { get; set; }
 
 
-        [JsonIgnore] 
+        [JsonIgnore]
         public ICollection<PokeFood> PokeFoods { get; set; }
 
         [JsonIgnore]
         public ICollection<PokeProperty> PokeProperties { get; set; }
+
+
         //
         //navigation property
 

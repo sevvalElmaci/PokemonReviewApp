@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
+using PokemonReviewApp.Dto.PokemonReviewApp.Dto;
+using PokemonReviewApp.Helpers;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using PokemonReviewApp.Helpers;
 
 namespace PokemonReviewApp.Controllers
 {
@@ -42,10 +43,37 @@ namespace PokemonReviewApp.Controllers
             if (!_categoryRepository.CategoryExist(categoryId))
                 return NotFound();
 
-            var category = _mapper.Map<CategoryDto>(
-                _categoryRepository.GetCategory(categoryId));
-
+            var category = _categoryRepository.GetCategoryDetail(categoryId);
             return Ok(category);
+
+        }
+        // =============================
+        // GET NEW DETAIL (NO MAPPER)
+        // =============================
+        [Authorize(Policy = "Category.List")]
+        [HttpGet("{categoryId}/new")]
+        [ProducesResponseType(200, Type = typeof(CategoryNewDetailDto))]
+        [ProducesResponseType(404)]
+        public IActionResult GetCategoryNew(int categoryId)
+        {
+            var result = _categoryRepository.GetCategoryNewDetail(categoryId);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+        // =============================
+        // LIST NEW DETAIL 
+        // =============================
+        [Authorize(Policy = "Category.List")]
+        [HttpGet("new")]
+        [ProducesResponseType(200, Type = typeof(List<CategoryNewDetailDto>))]
+        public IActionResult GetAllCategoriesNew()
+        {
+            var result = _categoryRepository.GetAllCategoriesNewDetail();
+            return Ok(result);
         }
 
         [Authorize(Policy = "Category.List")]
@@ -137,7 +165,7 @@ namespace PokemonReviewApp.Controllers
             if (duplicateExists)
                 return Conflict("A category with the same name already exists");
 
-            var existingCategory = _categoryRepository.GetCategory(categoryId);
+            var existingCategory = _categoryRepository.GetCategoryEntity(categoryId);
             existingCategory.Name = updatedCategory.Name;
 
             if (!_categoryRepository.UpdateCategory(existingCategory, userId))
@@ -154,7 +182,7 @@ namespace PokemonReviewApp.Controllers
         public IActionResult SoftDeleteCategory(int id)
         {
             // 1) Kategori var mı?
-            var category = _categoryRepository.GetCategory(id);
+            var category = _categoryRepository.GetCategoryDetail(id);
             if (category == null)
                 return NotFound("Category not found");
 

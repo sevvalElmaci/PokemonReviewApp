@@ -4,28 +4,44 @@ namespace PokemonReviewApp.Interfaces
 {
     public interface IUserRepository
     {
+        // ===========================
+        // GETTERS
+        // ===========================
         ICollection<User> GetUsers();
+        ICollection<User> GetDeletedUsers();
+
         User GetUser(int id);
+        User GetUserById(int id);
         User? GetUserByUserName(string userName);
         User GetUserIncludingDeleted(int id);
 
+        User GetUserWithRole(int id);
+        User GetUserWithRole(string username);
 
-        User GetUserById(int id);
+        ICollection<Permission> GetUserPermissions(int userId);
+
         bool UserExists(int id);
-        User CreateUserWithLog(User user); //transactional. it effects both two table. userlog and users
-        bool CreateUser(User user, int userId); // it just add data not logging.
-        bool UpdateUser(User user, int userId);
-        bool SoftDeleteUser(User user, int userId);
+
+
+        // ===========================
+        // CREATE
+        // ===========================
+
+        User CreateUserWithLog(User user);
+
+
+        // ===========================
+        // UPDATE + DELETE + RESTORE (WITH LOGGING)
+        // ===========================
+
+
+        bool UpdateUser(User user, int updatedByUserId);
+
+
+        bool SoftDeleteUser(User user, int deletedByUserId);
+
         bool RestoreUser(User user);
 
         bool Save();
-        User GetUserWithRole(int id);
-        ICollection<Permission> GetUserPermissions(int userId);
-        User GetUserWithRole(string username);
-
-        ICollection<User> GetDeletedUsers();
-
-
-
     }
 }

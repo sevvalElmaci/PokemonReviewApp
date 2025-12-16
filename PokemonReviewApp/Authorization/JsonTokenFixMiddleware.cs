@@ -18,7 +18,7 @@ namespace PokemonReviewApp.Authorization
 
             if (!string.IsNullOrEmpty(authHeader))
             {
-                // Eğer header JSON gibi görünüyorsa:
+                //  header JSON gibi görünüyor "{fdgfdg}"
                 if (authHeader.TrimStart().StartsWith("{"))
                 {
                     try
@@ -34,7 +34,7 @@ namespace PokemonReviewApp.Authorization
                     }
                     catch
                     {
-                        // JSON değilse hiçbir şey yapma
+                       // otherwise
                     }
                 }
             }

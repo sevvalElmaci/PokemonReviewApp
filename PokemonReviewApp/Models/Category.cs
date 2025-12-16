@@ -6,6 +6,8 @@
         public string Name { get; set; }
 
         public ICollection<PokemonCategory> PokemonCategories { get; set; }
+        public User? CreatedUser { get; set; }
+
 
     }
 }

@@ -23,8 +23,6 @@ namespace PokemonReviewApp.Controllers
             _mapper = mapper;
             _pokemonRepository = pokemonRepository;
         }
-
-
         [Authorize(Policy = "Food.List")]
         [HttpGet]
         public IActionResult GetFoods()

@@ -7,11 +7,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 
 namespace PokemonReviewApp.Authorization
-
-
 {
-    
-
     public class RawTokenAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         public RawTokenAuthenticationHandler(
@@ -25,17 +21,24 @@ namespace PokemonReviewApp.Authorization
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            // Header yoksa fail
+            // 1) HEADER VAR MI?
             if (!Request.Headers.ContainsKey("Authorization"))
                 return Task.FromResult(AuthenticateResult.Fail("Missing Authorization Header"));
 
             var rawToken = Request.Headers["Authorization"].ToString();
 
-            if (string.IsNullOrEmpty(rawToken))
-                return Task.FromResult(AuthenticateResult.Fail("Empty Token"));
+            if (string.IsNullOrWhiteSpace(rawToken))
+                return Task.FromResult(AuthenticateResult.Fail("Empty Authorization Header"));
+
+            // 2) BEARER VARSA TEMİZLE
+            if (rawToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                rawToken = rawToken.Substring("Bearer ".Length).Trim();
+            }
 
             try
             {
+                // 3) TOKEN VALIDATE
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.UTF8.GetBytes("SuperDuperCuperMEGASecretKey3!14159265358979");
 
@@ -47,13 +50,33 @@ namespace PokemonReviewApp.Authorization
                     ValidateIssuer = false,
                     ValidateAudience = false,
 
-                    ValidateLifetime = true,  
+                    ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
+
                 }, out SecurityToken validatedToken);
 
                 var jwt = (JwtSecurityToken)validatedToken;
 
+                // 4) CLAIMS → Identity
                 var identity = new ClaimsIdentity(jwt.Claims, Scheme.Name);
+
+                // Manual eklemeler (güvenlik için critical)
+                identity.AddClaim(new Claim(ClaimTypes.Role,
+                    jwt.Claims.FirstOrDefault(c => c.Type == "role")?.Value ?? ""));
+
+                identity.AddClaim(new Claim("userId",
+                    jwt.Claims.FirstOrDefault(c => c.Type == "userId")?.Value ?? ""));
+
+                identity.AddClaim(new Claim("unique_name",
+                    jwt.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value ?? ""));
+
+                // Permission listesi
+                var permissions = jwt.Claims.Where(c => c.Type == "permission");
+                foreach (var perm in permissions)
+                {
+                    identity.AddClaim(new Claim("permission", perm.Value));
+                }
+
                 var principal = new ClaimsPrincipal(identity);
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
@@ -61,9 +84,8 @@ namespace PokemonReviewApp.Authorization
             }
             catch (Exception ex)
             {
-                return Task.FromResult(AuthenticateResult.Fail("Token Validation Failed: " + ex.Message));
+                return Task.FromResult(AuthenticateResult.Fail($"Token validation failed: {ex.Message}"));
             }
         }
     }
-
 }

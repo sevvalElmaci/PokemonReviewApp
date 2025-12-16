@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PokemonReviewApp.Dto;
+using PokemonReviewApp.Authorization;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
 using System.Security.Claims;
@@ -11,7 +11,7 @@ namespace PokemonReviewApp.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
@@ -24,23 +24,43 @@ namespace PokemonReviewApp.Controllers
             _mapper = mapper;
         }
 
-        private int CurrentUserId =>
-            int.Parse(User.FindFirst("userId").Value);
+        private int CurrentUserId => int.Parse(User.FindFirst("userId").Value);
+        private string CurrentUserRole => User.FindFirst(ClaimTypes.Role)?.Value ?? "User";
 
-        private string CurrentUserRole =>
-     User.FindFirst(ClaimTypes.Role)?.Value
-     ?? "User";  // JWT’de "role" claim’in var
 
         // ============================================
-        // GET ALL USERS  (Admin & Manager)
+        // GET ALL USERS (NOT DELETED)
         // ============================================
         [HttpGet]
         [Authorize(Roles = "Admin,Manager")]
         public IActionResult GetUsers()
         {
             var users = _userRepository.GetUsers();
-            return Ok(_mapper.Map<List<UserDto>>(users));
+
+            var result = users.Select(u => new UserDto
+            {
+                Id = u.Id,
+                Username = u.UserName,
+                RoleId = u.RoleId,
+                RoleName = u.Role.RoleName
+            }).ToList();
+
+            return Ok(result);
         }
+
+
+
+        // ============================================
+        // GET ALL DELETED USERS
+        // ============================================
+        [HttpGet("deleted")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult GetDeletedUsers()
+        {
+            var users = _userRepository.GetDeletedUsers();
+            return Ok(users);
+        }
+
 
         // ============================================
         // GET USER BY ID
@@ -49,155 +69,167 @@ namespace PokemonReviewApp.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public IActionResult GetUser(int id)
         {
-            var user = _userRepository.GetUserById(id);
+            var user = _userRepository.GetUser(id);
             if (user == null)
-                return NotFound("User not found");
+                return NotFound("User not found.");
 
-            return Ok(_mapper.Map<UserDto>(user));
+            var dto = new UserDto
+            {
+                Id = user.Id,
+                Username = user.UserName,
+                RoleId = user.RoleId,
+                RoleName = user.Role.RoleName
+            };
+
+            return Ok(dto);
         }
 
-        // ============================================
-        // GET DELETED USERS (Admin only)
-        // ============================================
-        [HttpGet("deleted")]
-        [Authorize(Roles = "Admin")]
-        public IActionResult GetDeletedUsers()
-        {
-            var deleted = _userRepository.GetDeletedUsers();
-            return Ok(_mapper.Map<List<UserDto>>(deleted));
-        }
 
         // ============================================
-        // CREATE USER  (Hierarchy controlled)
+        // CREATE USER WITH LOG (Transactional)
         // ============================================
-        [HttpPost]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(403)]
-        public IActionResult CreateUser([FromBody] UserCreateDto request)
+        [HttpPost("create-with-log")]
+        [Authorize(Roles = "Admin,Manager")]
+        public IActionResult CreateUserWithLog([FromBody] UserCreateDto dto)
         {
-            if (request == null)
-                return BadRequest("Body is empty");
+            if (dto == null)
+                return BadRequest("Body is empty.");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var role = _roleRepository.GetRoleById(request.RoleId);
+            var role = _roleRepository.GetRoleById(dto.RoleId);
             if (role == null)
-                return BadRequest("Role not found");
+                return BadRequest("Role not found.");
 
-            // ----------------------------
-            // HIERARCHY RULES
-            // ----------------------------
-            if (CurrentUserRole == "User")
-                return Forbid("Users cannot create anyone.");
-
+            // ROLE HIERARCHY CONTROL
             if (CurrentUserRole == "Manager" && role.RoleName == "Admin")
                 return Forbid("Manager cannot create Admin.");
 
-            // Username duplicate check
-            var exists = _userRepository
-                .GetUsers()
-                .Any(u => u.UserName.ToLower() == request.Username.ToLower());
+            // Duplicate username
+            var exists = _userRepository.GetUserByUserName(dto.Username);
+            if (exists != null)
+                return Conflict("Username already exists.");
 
-            if (exists)
-                return Conflict("Username already exists");
+            // Password hashing
+            var salt = Sha512Hasher.GenerateSalt();
+            var hash = Sha512Hasher.HashPassword(dto.Password, salt);
 
-            // Create
-            var user = _mapper.Map<User>(request);
-
-            bool created = _userRepository.CreateUser(user, CurrentUserId);
-            if (!created)
+            var user = new User
             {
-                ModelState.AddModelError("", "Failed to create user.");
-                return StatusCode(500, ModelState);
-            }
+                UserName = dto.Username,
+                PasswordHash = hash,
+                PasswordSalt = salt,
+                RoleId = dto.RoleId,
+                CreatedUserId = CurrentUserId,
+                CreatedDateTime = DateTime.Now,
+                UpdatedUserId = CurrentUserId,
+                UpdatedDateTime = DateTime.Now,
+                IsDeleted = false
+            };
 
-            return Ok("User created successfully.");
+            try
+            {
+                var createdUser = _userRepository.CreateUserWithLog(user);
+                return Ok("User created successfully WITH log.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error while creating user: {ex.Message}");
+            }
         }
 
+
         // ============================================
-        // UPDATE USER (Admin + Manager)
+        // UPDATE USER (WITH LOG)
         // ============================================
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Manager")]
         public IActionResult UpdateUser(int id, [FromBody] UserUpdateDto dto)
         {
-            if (dto == null)
-                return BadRequest("Empty body");
-
-            if (dto.Id != id)
-                return BadRequest("ID mismatch");
-
-            var user = _userRepository.GetUserIncludingDeleted(id);
+            var user = _userRepository.GetUser(id);
             if (user == null)
-                return NotFound("User not found");
+                return NotFound("User not found.");
 
-            // Manager cannot update admin
-            if (CurrentUserRole == "Manager" && user.Role?.RoleName == "Admin")
-                return Forbid("Manager cannot update Admin.");
-            // Manager cannot assign Admin role to anyone (including themselves)
-            if (CurrentUserRole == "Manager" && dto.RoleId == 1)
+            var newRole = _roleRepository.GetRoleById(dto.RoleId);
+            if (newRole == null)
+                return BadRequest("Role not found.");
+
+            // MANAGER CANNOT UPDATE AN ADMIN
+            if (CurrentUserRole == "Manager" && user.Role.RoleName == "Admin")
+                return Forbid("Manager cannot update an Admin.");
+
+            // Manager cannot assign Admin role
+            if (CurrentUserRole == "Manager" && newRole.RoleName == "Admin")
                 return Forbid("Manager cannot assign Admin role.");
 
+            // ============================
+            // PASSWORD CHANGE (OPTIONAL)
+            // ============================
+            var wantsPasswordChange = !string.IsNullOrWhiteSpace(dto.NewPassword);
 
-            // Username duplicate (except self)
-            var normalized = dto.Username?.ToLower();
-            var exists = _userRepository
-                .GetUsers()
-                .FirstOrDefault(u => u.UserName.ToLower() == normalized);
-
-            if (exists != null && exists.Id != id)
-                return Conflict("Username already exists");
-
-            // Update allowed fields
-            user.UserName = dto.Username ?? user.UserName;
-            user.Password = string.IsNullOrWhiteSpace(dto.Password)
-                            ? user.Password
-                            : dto.Password;
-
-            user.RoleId = dto.RoleId;
-            bool updated = _userRepository.UpdateUser(user, CurrentUserId);
-
-            if (!updated)
+            if (wantsPasswordChange)
             {
-                ModelState.AddModelError("", "Failed to update user");
-                return StatusCode(500, ModelState);
+                // newPassword girildiyse oldPassword zorunlu
+                if (string.IsNullOrWhiteSpace(dto.OldPassword))
+                    return BadRequest("OldPassword is required to change password.");
+
+                // old password doğrula: mevcut salt ile hashle ve karşılaştır
+                var oldHash = Sha512Hasher.HashPassword(dto.OldPassword, user.PasswordSalt);
+
+                if (oldHash != user.PasswordHash)
+                    return Forbid("Old password is incorrect. Password change denied.");
+
+                // doğruysa yeni salt+hash üret
+                var newSalt = Sha512Hasher.GenerateSalt();
+                var newHash = Sha512Hasher.HashPassword(dto.NewPassword, newSalt);
+
+                user.PasswordSalt = newSalt;
+                user.PasswordHash = newHash;
             }
 
-            return Ok("User updated successfully.");
+            // ============================
+            // OTHER UPDATES
+            // ============================
+            user.UserName = dto.Username;
+            user.RoleId = dto.RoleId;
+
+            var success = _userRepository.UpdateUser(user, CurrentUserId);
+            if (!success)
+                return StatusCode(500, "Failed to update user.");
+
+            return Ok(wantsPasswordChange
+                ? "User updated successfully (password changed)."
+                : "User updated successfully.");
         }
 
+
+
+        // ============================================
+        // SOFT DELETE USER (WITH LOG)
+        // ============================================
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Manager")]
         public IActionResult SoftDeleteUser(int id)
         {
-            var targetUser = _userRepository.GetUserById(id);
-            if (targetUser == null)
-                return NotFound("User not found");
+            var user = _userRepository.GetUser(id);
+            if (user == null)
+                return NotFound("User not found.");
 
-            // Manager cannot delete Admin
-            if (CurrentUserRole == "Manager" && targetUser.RoleId == 1)
+            if (CurrentUserRole == "Manager" && user.Role.RoleName == "Admin")
                 return Forbid("Manager cannot delete an Admin.");
 
-            // Manager cannot delete another Manager
-            if (CurrentUserRole == "Manager" && targetUser.RoleId == 2)
-                return Forbid("Manager cannot delete another Manager.");
+            var result = _userRepository.SoftDeleteUser(user, CurrentUserId);
 
-            // OK → delete
-            bool deleted = _userRepository.SoftDeleteUser(targetUser, CurrentUserId);
-
-            if (!deleted)
-            {
-                ModelState.AddModelError("", "Failed to delete user.");
-                return StatusCode(500, ModelState);
-            }
+            if (!result)
+                return StatusCode(500, "Failed to delete user.");
 
             return Ok("User soft-deleted successfully.");
         }
 
 
         // ============================================
-        // RESTORE USER (NO AUDIT AS YOU WANTED)
+        // RESTORE USER (WITH LOG)
         // ============================================
         [HttpPost("restore/{id}")]
         [Authorize(Roles = "Admin")]
@@ -207,67 +239,12 @@ namespace PokemonReviewApp.Controllers
             if (user == null)
                 return NotFound("User not found.");
 
-            if (!user.IsDeleted)
-                return BadRequest("User is already active.");
+            var result = _userRepository.RestoreUser(user);
 
-            bool restored = _userRepository.RestoreUser(user);
-
-            if (!restored)
-            {
-                ModelState.AddModelError("", "Failed to restore user.");
-                return StatusCode(500, ModelState);
-            }
+            if (!result)
+                return StatusCode(500, "Failed to restore user.");
 
             return Ok("User restored successfully.");
-        }
-
-        [HttpPost("create-with-log")]
-        [Authorize(Roles = "Admin,Manager")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        public IActionResult CreateUserWithLog([FromBody] UserCreateDto dto)
-        {
-            if (dto == null)
-                return BadRequest("Body is empty");
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var role = _roleRepository.GetRoleById(dto.RoleId);
-            if (role == null)
-                return BadRequest("Role not found");
-
-            // Hierarchy check
-            if (CurrentUserRole == "User")
-                return Forbid("Users cannot create anyone.");
-
-            if (CurrentUserRole == "Manager" && role.RoleName == "Admin")
-                return Forbid("Manager cannot create Admin.");
-
-            // Duplicate username check
-            var existing = _userRepository.GetUserByUserName(dto.Username);
-            if (existing != null)
-                return Conflict("This username already exists.");
-
-            // Map
-            var userEntity = _mapper.Map<User>(dto);
-
-            // Logged creator
-            userEntity.CreatedUserId = CurrentUserId;
-            userEntity.CreatedDateTime = DateTime.Now;
-            userEntity.UpdatedUserId = CurrentUserId;
-            userEntity.UpdatedDateTime = DateTime.Now;
-
-            // === CREATE WITH LOG FUNCTION ===
-            var createdUser = _userRepository.CreateUserWithLog(userEntity);
-
-            if (createdUser == null)
-            {
-                ModelState.AddModelError("", "Failed to create user with log.");
-                return StatusCode(500, ModelState);
-            }
-
-            return Ok("User created successfully WITH log.");
         }
     }
 }

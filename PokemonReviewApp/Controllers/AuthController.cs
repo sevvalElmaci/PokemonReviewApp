@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PokemonReviewApp.Authorization;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,53 +25,60 @@ namespace PokemonReviewApp.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDto login)
         {
+            if (login == null)
+                return BadRequest("Body is empty.");
+
+            // USER + ROLE
             var user = _userRepository.GetUserWithRole(login.UserName);
-
             if (user == null)
-                return Unauthorized("User not found");
+                return Unauthorized("User not found.");
 
-            if (user.Password != login.Password)
-                return Unauthorized("Invalid password");
+            // PASSWORD CHECK (SHA-512 + SALT)
+            var computedHash = Sha512Hasher.HashPassword(login.Password, user.PasswordSalt);
+            if (computedHash != user.PasswordHash)
+                return Unauthorized("Invalid username or password.");
 
-            var roleName = user.Role.RoleName;
+            // ---- PERMISSIONS ----
+            var userPermissions = _userRepository.GetUserPermissions(user.Id);
 
-            // PERMISSION CLAIMLER
-            var permissionClaims = _userRepository
-                .GetUserPermissions(user.Id)
-                .Select(p => new Claim("permission", p.PermissionName))
-                .ToList();
-
+            // ---- CLAIMS (RawToken ile birebir uyumlu) ----
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Role, roleName),
-                new Claim("userId", user.Id.ToString())
-
+                new Claim("userId", user.Id.ToString()),         // RawToken okuyor
+                new Claim("role", user.Role.RoleName),         
+                new Claim("unique_name", user.UserName)       
             };
 
-            claims.AddRange(permissionClaims);
+            // Permission claimleri
+            foreach (var perm in userPermissions)
+                claims.Add(new Claim("permission", perm.PermissionName));
 
-            var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
+            // ---- SIGNING KEY ----
+            var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(2),
 
-                Issuer = _config["Jwt:Issuer"],
-                Audience = _config["Jwt:Audience"],
+                // 💛 1 YILLIK TOKEN
+                Expires = DateTime.UtcNow.AddYears(1),
 
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature
-                )
+                    SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.CreateToken(tokenDescriptor);
+            var tokenString = handler.WriteToken(token);
 
-            return Ok(new { token = tokenString });
+            return Ok(new
+            {
+                token = tokenString,
+                username = user.UserName,
+                role = user.Role.RoleName,
+                permissions = userPermissions.Select(p => p.PermissionName).ToList()
+            });
         }
     }
 }

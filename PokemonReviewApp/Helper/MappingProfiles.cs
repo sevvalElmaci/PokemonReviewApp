@@ -9,6 +9,53 @@ public class MappingProfiles : Profile
         // Pokemon
         CreateMap<Pokemon, PokemonDto>().ReverseMap();
         CreateMap<Pokemon, PokemonDtoCreate>().ReverseMap();
+        CreateMap<Pokemon, PokemonDetailDto>()
+    .ForMember(dest => dest.CreatedBy,
+        opt => opt.MapFrom(src => src.CreatedUser != null ? src.CreatedUser.UserName : null))
+
+    .ForMember(dest => dest.OwnerName,
+        opt => opt.MapFrom(src =>
+            src.PokemonOwners != null && src.PokemonOwners.Any()
+                ? src.PokemonOwners.First().Owner.FirstName
+                : null))
+
+    .ForMember(dest => dest.CategoryName,
+        opt => opt.MapFrom(src =>
+            src.PokemonCategories != null && src.PokemonCategories.Any()
+                ? src.PokemonCategories.First().Category.Name
+                : null))
+
+    .ForMember(dest => dest.CategoryCreatedBy,
+        opt => opt.MapFrom(src =>
+            src.PokemonCategories != null
+            && src.PokemonCategories.Any()
+            && src.PokemonCategories.First().Category.CreatedUser != null
+                ? src.PokemonCategories.First().Category.CreatedUser.UserName
+                : null))
+
+    .ForMember(dest => dest.Owners,
+        opt => opt.MapFrom(src =>
+            src.PokemonOwners != null
+                ? src.PokemonOwners.Select(o => o.Owner.FirstName).ToList()
+                : new List<string>()))
+
+    .ForMember(dest => dest.Categories,
+        opt => opt.MapFrom(src =>
+            src.PokemonCategories != null
+                ? src.PokemonCategories.Select(c => c.Category.Name).ToList()
+                : new List<string>()))
+
+    .ForMember(dest => dest.Foods,
+        opt => opt.MapFrom(src =>
+            src.PokeFoods != null
+                ? src.PokeFoods.Select(f => f.Food.Name).ToList()
+                : new List<string>()))
+
+    .ForMember(dest => dest.Rating,
+        opt => opt.MapFrom(src =>
+            src.Reviews != null && src.Reviews.Any()
+                ? src.Reviews.Average(r => r.Rating)
+                : 0));
 
         // Category
         CreateMap<Category, CategoryDto>().ReverseMap();

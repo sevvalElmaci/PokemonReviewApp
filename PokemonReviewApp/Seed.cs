@@ -1,4 +1,6 @@
-﻿using PokemonReviewApp.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using PokemonReviewApp.Authorization;
+using PokemonReviewApp.Data;
 using PokemonReviewApp.Models;
 
 namespace PokemonReviewApp
@@ -14,20 +16,27 @@ namespace PokemonReviewApp
         {
             if (!_context.Users.Any())
             {
+                var salt = Sha512Hasher.GenerateSalt();
+                var hash = Sha512Hasher.HashPassword("adminadmin", salt);
+
                 var admin = new User
                 {
                     UserName = "admin",
-                    Password = "adminadmin",
-                    RoleId = 1,           // Admin
-                    CreatedUserId = null, // system
+                    RoleId = 1,
+                    PasswordSalt = salt,
+                    PasswordHash = hash,
+                    CreatedUserId = null,
                     CreatedDateTime = DateTime.Now,
                     UpdatedUserId = null,
                     UpdatedDateTime = null,
                     IsDeleted = false
                 };
+
                 _context.Users.Add(admin);
                 _context.SaveChanges();
             }
+
+
 
             if (!_context.PokemonOwners.Any())
                 //veritabanında hiç pokemonowner yoksa

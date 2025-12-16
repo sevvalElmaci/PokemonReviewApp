@@ -55,6 +55,14 @@ namespace PokemonReviewApp.Data
             // Seeder
             DbSeeder.Seed(modelBuilder);
 
+
+            modelBuilder.Entity<Pokemon>()
+    .HasOne(p => p.CreatedUser)
+    .WithMany()
+    .HasForeignKey(p => p.CreatedUserId)
+    .IsRequired(false)
+    .OnDelete(DeleteBehavior.Restrict);
+
             // ----------------------------
             // PokemonCategory
             // ----------------------------
@@ -70,6 +78,13 @@ namespace PokemonReviewApp.Data
                 .HasOne(p => p.Category)
                 .WithMany(pc => pc.PokemonCategories)
                 .HasForeignKey(c => c.CategoryId);
+
+            modelBuilder.Entity<Category>()
+    .HasOne(c => c.CreatedUser)
+    .WithMany()
+    .HasForeignKey(c => c.CreatedUserId)
+    .OnDelete(DeleteBehavior.Restrict);
+
 
             // ----------------------------
             // PokemonOwner

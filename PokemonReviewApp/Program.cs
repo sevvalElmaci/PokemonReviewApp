@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using PokemonReviewApp;
 using PokemonReviewApp.Authorization;
 using PokemonReviewApp.Data;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Repository;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,11 +60,14 @@ builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddTransient<Seed>();
 builder.Services.AddHttpContextAccessor();
 
+
 // AUTHORIZATION (Permission Provider + Handler)
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
 builder.Services.AddAuthorization(); // 
+
+
 
 //// JWT
 //var jwtSettings = builder.Configuration.GetSection("Jwt");
