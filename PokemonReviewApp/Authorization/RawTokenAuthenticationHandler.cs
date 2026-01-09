@@ -21,7 +21,6 @@ namespace PokemonReviewApp.Authorization
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            // 1) HEADER VAR MI?
             if (!Request.Headers.ContainsKey("Authorization"))
                 return Task.FromResult(AuthenticateResult.Fail("Missing Authorization Header"));
 
@@ -30,7 +29,6 @@ namespace PokemonReviewApp.Authorization
             if (string.IsNullOrWhiteSpace(rawToken))
                 return Task.FromResult(AuthenticateResult.Fail("Empty Authorization Header"));
 
-            // 2) BEARER VARSA TEMİZLE
             if (rawToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
             {
                 rawToken = rawToken.Substring("Bearer ".Length).Trim();
@@ -38,7 +36,7 @@ namespace PokemonReviewApp.Authorization
 
             try
             {
-                // 3) TOKEN VALIDATE
+                
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.UTF8.GetBytes("SuperDuperCuperMEGASecretKey3!14159265358979");
 
@@ -57,10 +55,10 @@ namespace PokemonReviewApp.Authorization
 
                 var jwt = (JwtSecurityToken)validatedToken;
 
-                // 4) CLAIMS → Identity
+                 
                 var identity = new ClaimsIdentity(jwt.Claims, Scheme.Name);
 
-                // Manual eklemeler (güvenlik için critical)
+                //Manual adding for specific claims
                 identity.AddClaim(new Claim(ClaimTypes.Role,
                     jwt.Claims.FirstOrDefault(c => c.Type == "role")?.Value ?? ""));
 
@@ -70,7 +68,7 @@ namespace PokemonReviewApp.Authorization
                 identity.AddClaim(new Claim("unique_name",
                     jwt.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value ?? ""));
 
-                // Permission listesi
+                // Permissions
                 var permissions = jwt.Claims.Where(c => c.Type == "permission");
                 foreach (var perm in permissions)
                 {

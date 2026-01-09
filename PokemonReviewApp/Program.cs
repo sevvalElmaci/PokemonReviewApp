@@ -81,20 +81,6 @@ builder.Services.AddAuthentication(options =>
 })
 .AddScheme<AuthenticationSchemeOptions, RawTokenAuthenticationHandler>("RawToken", null);
 
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateIssuer = true,
-//            ValidateAudience = true,
-//            ValidateIssuerSigningKey = true,
-//            ValidIssuer = jwtSettings["Issuer"],
-//            ValidAudience = jwtSettings["Audience"],
-//            IssuerSigningKey = new SymmetricSecurityKey(key)
-//        };
-//    });
-
 // DATABASE
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -120,7 +106,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseMiddleware<JsonTokenFixMiddleware>();
 
-// MUST BE IN THIS ORDER
+// MUST BE IN THIS ORDER or it does not work
 app.UseAuthentication();
 app.UseAuthorization();
 

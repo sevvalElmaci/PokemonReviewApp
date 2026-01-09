@@ -15,10 +15,6 @@ namespace PokemonReviewApp.Repository
         {
             _context = context;
         }
-
-        // =========================
-        // API – DTO
-        // =========================
         public CategoryDetailDto GetCategoryDetail(int id)
         {
             var query =
@@ -76,18 +72,13 @@ namespace PokemonReviewApp.Repository
             };
         }
 
-        // =========================
-        // ENTITY – Internal usage
-        // =========================
         public Category GetCategoryEntity(int id)
         {
             return _context.Categories
                 .FirstOrDefault(c => c.Id == id && !c.IsDeleted);
         }
 
-        // =========================
-        // LISTS
-        // =========================
+ 
         public ICollection<Category> GetCategories()
         {
             return _context.Categories.ToList();
@@ -116,9 +107,7 @@ namespace PokemonReviewApp.Repository
                 .ToList();
         }
 
-        // =========================
-        // COMMANDS
-        // =========================
+  
         public bool CreateCategory(Category category, int userId)
         {
             category.CreatedUserId = userId;
@@ -160,9 +149,7 @@ namespace PokemonReviewApp.Repository
             Save();
         }
 
-        // =========================
-        // UTILS
-        // =========================
+        
         public bool CategoryExist(int id)
         {
             return _context.Categories.Any(c => c.Id == id);
@@ -170,7 +157,7 @@ namespace PokemonReviewApp.Repository
         public Category GetCategoryIncludingDeleted(int id)
         {
             return _context.Categories
-                .IgnoreQueryFilters()      // Soft delete filtresini bypass eder
+                .IgnoreQueryFilters()      // Soft delete filtresini bypass ediyoruz
                 .FirstOrDefault(c => c.Id == id);
         }
         public ICollection<CategoryNewDetailDto> GetAllCategoriesNewDetail()
